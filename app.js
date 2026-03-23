@@ -1,6 +1,7 @@
 const upload = document.getElementById("upload");
 const photos = document.getElementById("photos");
 const livre = document.getElementById("canvasLivre");
+const album = document.getElementById("albumArea");
 
 upload.onchange = e=>{
 [...e.target.files].forEach(file=>{
@@ -29,16 +30,24 @@ photos.appendChild(div);
 }
 
 function dragStart(e){
-e.dataTransfer.setData("id","");
 window.dragged = e.target;
 }
 
 document.addEventListener("dragover", e=>e.preventDefault());
 
 document.addEventListener("drop", e=>{
-if(window.dragged){
-window.dragged.style.left = e.pageX - 100 +"px";
-window.dragged.style.top = e.pageY - 120 +"px";
+if(!window.dragged) return;
+
+if(e.target.closest("#albumArea")){
+album.appendChild(window.dragged);
+window.dragged.style.position="relative";
+window.dragged.style.left="0";
+window.dragged.style.top="0";
+}
+else if(e.target.closest("#canvasLivre")){
+livre.appendChild(window.dragged);
+window.dragged.style.left = e.pageX-100+"px";
+window.dragged.style.top = e.pageY-120+"px";
 }
 });
 
