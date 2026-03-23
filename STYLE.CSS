@@ -1,0 +1,81 @@
+body{
+background:#eee;
+font-family:arial;
+margin:0;
+}
+
+.menu{
+background:#111;
+color:white;
+display:flex;
+gap:20px;
+padding:10px;
+}
+
+.btn{
+cursor:pointer;
+}
+
+.tab{
+display:none;
+padding:20px;
+}
+
+.tab.active{
+display:block;
+}
+
+.frame{
+width:650px;
+height:850px;
+margin:auto;
+background:#ddd;
+border:25px solid #7a4b1e;
+position:relative;
+box-shadow:0 20px 40px rgba(0,0,0,.4);
+}
+
+.rope{
+position:absolute;
+left:20px;
+right:20px;
+height:3px;
+background:#caa472;
+}
+
+.r1{ top:150px; transform:rotate(-3deg); }
+.r2{ top:350px; transform:rotate(4deg); }
+.r3{ top:550px; transform:rotate(-2deg); }
+
+.photo{
+width:110px;
+background:white;
+padding:10px 10px 25px;
+position:absolute;
+cursor:grab;
+box-shadow:0 10px 20px rgba(0,0,0,.3);
+}
+
+.photo img{
+width:100%;
+}
+
+.photo::before{
+content:"";
+width:22px;
+height:22px;
+background:url("https://i.imgur.com/3XjKX9K.png") center/contain no-repeat;
+position:absolute;
+top:-15px;
+left:50%;
+transform:translateX(-50%);
+}
+
+.canvas-livre{
+width:90%;
+height:600px;
+background:white;
+margin:auto;
+border:2px dashed #999;
+position:relative;
+}
