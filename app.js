@@ -17,39 +17,58 @@ function createPhoto(src){
 
 const div = document.createElement("div");
 div.className="photo";
-div.draggable=true;
-
 div.innerHTML=`<img src="${src}">`;
 
 div.style.left = Math.random()*450+"px";
 div.style.top = Math.random()*600+"px";
+div.dataset.rotate=0;
 
-div.addEventListener("dragstart", dragStart);
+enableDrag(div);
+enableControls(div);
 
 photos.appendChild(div);
 }
 
-function dragStart(e){
-window.dragged = e.target;
+function enableDrag(el){
+
+let offsetX, offsetY, dragging=false;
+
+el.onmousedown = e=>{
+dragging=true;
+offsetX = e.offsetX;
+offsetY = e.offsetY;
+el.style.zIndex=999;
+};
+
+document.onmousemove = e=>{
+if(!dragging) return;
+
+el.style.left = e.pageX-offsetX+"px";
+el.style.top = e.pageY-offsetY+"px";
+};
+
+document.onmouseup = ()=>{
+dragging=false;
+};
 }
 
-document.addEventListener("dragover", e=>e.preventDefault());
+function enableControls(el){
 
-document.addEventListener("drop", e=>{
-if(!window.dragged) return;
+el.ondblclick = ()=>{
+let r = Number(el.dataset.rotate);
+r+=15;
+el.dataset.rotate=r;
+el.style.transform=`rotate(${r}deg)`;
+};
 
-if(e.target.closest("#albumArea")){
-album.appendChild(window.dragged);
-window.dragged.style.position="relative";
-window.dragged.style.left="0";
-window.dragged.style.top="0";
+el.oncontextmenu = e=>{
+e.preventDefault();
+if(confirm("Excluir foto?")){
+el.remove();
 }
-else if(e.target.closest("#canvasLivre")){
-livre.appendChild(window.dragged);
-window.dragged.style.left = e.pageX-100+"px";
-window.dragged.style.top = e.pageY-120+"px";
+};
+
 }
-});
 
 function showTab(id){
 document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
