@@ -1,16 +1,12 @@
 const world = document.getElementById("world")
 
-let objects = []
-
 document.getElementById("upload").addEventListener("change", e => {
 
-    const files = e.target.files
-
-    for (let file of files){
+    for (let file of e.target.files){
 
         const reader = new FileReader()
 
-        reader.onload = function(ev){
+        reader.onload = ev => {
 
             createPhoto(ev.target.result)
 
@@ -28,41 +24,76 @@ function createPhoto(src){
 
     photo.className = "photo"
 
-    photo.style.left = (window.innerWidth/2) + "px"
-    photo.style.top = (window.innerHeight/2) + "px"
+    photo.style.left = world.clientWidth/2 + "px"
+    photo.style.top = world.clientHeight/2 + "px"
 
     photo.innerHTML = `<img src="${src}">`
 
-    makeDraggable(photo)
+    makeDrag(photo)
 
     world.appendChild(photo)
 
 }
 
-function makeDraggable(el){
+function makeDrag(el){
 
-    let offsetX = 0
-    let offsetY = 0
-    let dragging = false
+    let down = false
+    let offX = 0
+    let offY = 0
 
-    el.addEventListener("mousedown", e => {
+    el.onmousedown = e => {
 
-        dragging = true
+        down = true
 
-        offsetX = e.offsetX
-        offsetY = e.offsetY
+        offX = e.offsetX
+        offY = e.offsetY
 
-    })
+    }
 
-    window.addEventListener("mousemove", e => {
+    window.onmousemove = e => {
 
-        if(!dragging) return
+        if(!down) return
 
-        el.style.left = (e.clientX - offsetX) + "px"
-        el.style.top = (e.clientY - offsetY) + "px"
+        el.style.left = (e.clientX - 220 - offX) + "px"
+        el.style.top = (e.clientY - offY) + "px"
 
-    })
+    }
 
-    window.addEventListener("mouseup", () => dragging = false)
+    window.onmouseup = () => down = false
+
+}
+
+/* EXPORT */
+
+function exportA4Portrait(){
+
+html2canvas(world).then(canvas=>{
+const img = canvas.toDataURL("image/png")
+const pdf = new jspdf.jsPDF("p","mm","a4")
+pdf.addImage(img,"PNG",0,0,210,297)
+pdf.save("mural.pdf")
+})
+
+}
+
+function exportA4Landscape(){
+
+html2canvas(world).then(canvas=>{
+const img = canvas.toDataURL("image/png")
+const pdf = new jspdf.jsPDF("l","mm","a4")
+pdf.addImage(img,"PNG",0,0,297,210)
+pdf.save("mural.pdf")
+})
+
+}
+
+function exportPDF(){
+
+html2canvas(world).then(canvas=>{
+const img = canvas.toDataURL("image/png")
+const pdf = new jspdf.jsPDF()
+pdf.addImage(img,"PNG",10,10)
+pdf.save("mural.pdf")
+})
 
 }
