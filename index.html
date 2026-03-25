@@ -1,43 +1,37 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt">
 <head>
 <meta charset="UTF-8">
-<title>Polaroid Studio</title>
+<title>PolaroidMaker</title>
 <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
 <div class="sidebar">
+<h2>POLAROID</h2>
 
-<h1>📸 Studio</h1>
-
-<button onclick="showTab('mural')">Mural</button>
-<button onclick="showTab('livre')">Livre</button>
-<button onclick="showTab('album')">Álbum</button>
+<button onclick="setCategoria('livre')">Livre</button>
+<button onclick="setCategoria('calendario')">Calendário</button>
+<button onclick="setCategoria('folhinha')">Folhinha</button>
+<button onclick="setCategoria('album')">Álbum</button>
+<button onclick="setCategoria('marcador')">Marcador</button>
+<button onclick="setCategoria('mural')">Mural</button>
 
 <input type="file" id="upload" multiple>
-
 </div>
 
-<div class="content">
-
-<div id="mural" class="tab active">
-<div class="frame">
-<div class="rope" style="top:140px"></div>
-<div class="rope" style="top:320px"></div>
-<div class="rope" style="top:500px"></div>
-<div id="photos"></div>
-</div>
+<div id="world">
+<div id="camera"></div>
 </div>
 
-<div id="livre" class="tab">
-<div id="canvasLivre"></div>
-</div>
+<div class="framesPanel">
+<h3>Molduras</h3>
 
-<div id="album" class="tab">
-<div id="albumArea"></div>
-</div>
+<button onclick="setFrame('polaroid')">Polaroid</button>
+<button onclick="setFrame('neon')">Neon</button>
+<button onclick="setFrame('glass')">Glass</button>
+<button onclick="setFrame('minimal')">Minimal</button>
+<button onclick="setFrame('scrap')">Scrap</button>
 
 </div>
 
@@ -45,4 +39,3 @@
 
 </body>
 </html>
-<!-- update -->
