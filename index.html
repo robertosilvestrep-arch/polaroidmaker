@@ -2,35 +2,37 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<title>Polaroid Maker</title>
+<title>Polaroid Studio</title>
 <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
 <div class="sidebar">
-<h2>📸 Polaroid</h2>
 
-<div class="menuItem" onclick="showTab('mural')">🖼️ Mural</div>
-<div class="menuItem" onclick="showTab('livre')">🎨 Livre</div>
-<div class="menuItem" onclick="showTab('album')">📁 Álbum</div>
+<h1>📸 Studio</h1>
+
+<button onclick="showTab('mural')">Mural</button>
+<button onclick="showTab('livre')">Livre</button>
+<button onclick="showTab('album')">Álbum</button>
 
 <input type="file" id="upload" multiple>
+
 </div>
 
 <div class="content">
 
 <div id="mural" class="tab active">
 <div class="frame">
-<div class="rope r1"></div>
-<div class="rope r2"></div>
-<div class="rope r3"></div>
+<div class="rope" style="top:140px"></div>
+<div class="rope" style="top:320px"></div>
+<div class="rope" style="top:500px"></div>
 <div id="photos"></div>
 </div>
 </div>
 
 <div id="livre" class="tab">
-<div id="canvasLivre" class="canvas-livre"></div>
+<div id="canvasLivre"></div>
 </div>
 
 <div id="album" class="tab">
