@@ -10,31 +10,35 @@
 <div class="sidebar">
 <h2>POLAROID</h2>
 
-<button onclick="setCategoria('livre')">Livre</button>
-<button onclick="setCategoria('calendario')">Calendário</button>
-<button onclick="setCategoria('folhinha')">Folhinha</button>
-<button onclick="setCategoria('album')">Álbum</button>
-<button onclick="setCategoria('marcador')">Marcador</button>
-<button onclick="setCategoria('mural')">Mural</button>
+<button>Livre</button>
+<button>Calendário</button>
+<button>Folhinha</button>
+<button>Álbum</button>
+<button>Marcador</button>
+<button>Mural</button>
 
 <input type="file" id="upload" multiple>
 </div>
 
-<div id="world">
-<div id="camera"></div>
-</div>
+<div id="world"></div>
 
-<div class="framesPanel">
+<div class="rightPanel">
 <h3>Molduras</h3>
 
-<button onclick="setFrame('polaroid')">Polaroid</button>
-<button onclick="setFrame('neon')">Neon</button>
-<button onclick="setFrame('glass')">Glass</button>
-<button onclick="setFrame('minimal')">Minimal</button>
-<button onclick="setFrame('scrap')">Scrap</button>
+<button>Polaroid</button>
+<button>Neon</button>
+<button>Glass</button>
+
+<h3>Exportar</h3>
+
+<button onclick="exportA4Portrait()">A4 Retrato</button>
+<button onclick="exportA4Landscape()">A4 Paisagem</button>
+<button onclick="exportPDF()">PDF</button>
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/html2canvas"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf"></script>
 <script src="app.js"></script>
 
 </body>
