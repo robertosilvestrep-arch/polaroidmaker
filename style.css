@@ -1,13 +1,93 @@
+body{
+margin:0;
+font-family:Arial;
+background:#0b0f1a;
+color:white;
+overflow:hidden;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+position:fixed;
+left:0;
+top:0;
+width:220px;
+height:100vh;
+background:rgba(20,25,40,.9);
+backdrop-filter:blur(10px);
+padding:20px;
+box-shadow:0 0 20px #000;
+z-index:10;
+}
+
+.sidebar button{
+display:block;
+width:100%;
+margin:8px 0;
+padding:10px;
+background:#1d2b50;
+border:none;
+color:white;
+cursor:pointer;
+border-radius:8px;
+}
+
+.sidebar input{
+margin-top:20px;
+}
+
+/* WORLD */
+
+#world{
+position:absolute;
+left:220px;
+top:0;
+right:0;
+bottom:0;
+overflow:hidden;
+background:
+radial-gradient(circle at center,#141b2f,#05070c);
+}
+
+/* GRID */
+
+#world::after{
+content:"";
+position:absolute;
+inset:0;
+background-image:
+linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),
+linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);
+background-size:60px 60px;
+}
+
+/* PHOTO */
+
 .photo{
 position:absolute;
-width:180px;
+width:200px;
 background:white;
 padding:10px;
-box-shadow:0 20px 40px rgba(0,0,0,.5);
+box-shadow:0 25px 60px rgba(0,0,0,.7);
+border-radius:4px;
 cursor:grab;
 }
 
 .photo img{
 width:100%;
 display:block;
+}
+
+/* PANEL DIREITO */
+
+.framesPanel{
+position:fixed;
+right:0;
+top:0;
+width:200px;
+height:100vh;
+background:rgba(20,25,40,.9);
+padding:20px;
+box-shadow:0 0 20px #000;
 }
