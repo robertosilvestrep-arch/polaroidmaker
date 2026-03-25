@@ -1,125 +1,135 @@
 const world = document.getElementById("world")
+const upload = document.getElementById("upload")
+
 let selected = null
+let dragTarget = null
+let offsetX = 0
+let offsetY = 0
 
-document.getElementById("upload").addEventListener("change", e => {
+/* UPLOAD */
 
-    for (let file of e.target.files){
+upload.addEventListener("change", e => {
+
+    Array.from(e.target.files).forEach(file => {
 
         const reader = new FileReader()
 
-        reader.onload = ev => createPhoto(ev.target.result)
+        reader.onload = ev => {
+
+            const photo = document.createElement("div")
+            photo.className = "photo"
+
+            photo.style.left = 200 + Math.random()*300 + "px"
+            photo.style.top = 100 + Math.random()*200 + "px"
+
+            photo.innerHTML = `<img src="${ev.target.result}">`
+
+            world.appendChild(photo)
+
+        }
 
         reader.readAsDataURL(file)
 
+    })
+
+})
+
+/* SELEÇÃO */
+
+world.addEventListener("click", e => {
+
+    const p = e.target.closest(".photo")
+
+    document.querySelectorAll(".photo").forEach(el=>{
+        el.style.outline="none"
+    })
+
+    if(p){
+        selected = p
+        p.style.outline="3px solid cyan"
+    }else{
+        selected=null
     }
 
 })
 
-function createPhoto(src){
+/* DRAG PROFISSIONAL GLOBAL */
 
-    const photo = document.createElement("div")
-    photo.className = "photo"
-    photo.style.left = Math.random()*500 + 100 + "px"
-    photo.style.top = Math.random()*300 + 100 + "px"
+world.addEventListener("mousedown", e => {
 
-    photo.innerHTML = `<img src="${src}">`
+    const p = e.target.closest(".photo")
 
-    world.appendChild(photo)
+    if(!p) return
 
-    selectPhoto(photo)
-    makeDrag(photo)
+    dragTarget = p
 
-}
+    offsetX = e.clientX - p.offsetLeft
+    offsetY = e.clientY - p.offsetTop
 
-function selectPhoto(photo){
+})
 
-    photo.onclick = e => {
+window.addEventListener("mousemove", e => {
 
-        e.stopPropagation()
+    if(!dragTarget) return
 
-        document.querySelectorAll(".photo").forEach(p=>p.style.outline="none")
+    dragTarget.style.left = e.clientX - offsetX + "px"
+    dragTarget.style.top = e.clientY - offsetY + "px"
 
-        selected = photo
-        photo.style.outline = "3px solid #00f0ff"
+})
 
-    }
-
-}
-
-world.onclick = () => {
-    selected = null
-    document.querySelectorAll(".photo").forEach(p=>p.style.outline="none")
-}
-
-/* DRAG PROFISSIONAL */
-
-function makeDrag(el){
-
-    let startX,startY,origX,origY,drag=false
-
-    el.addEventListener("mousedown", e=>{
-
-        drag = true
-
-        startX = e.clientX
-        startY = e.clientY
-
-        origX = parseFloat(el.style.left)
-        origY = parseFloat(el.style.top)
-
-        el.style.cursor="grabbing"
-
-    })
-
-    window.addEventListener("mousemove", e=>{
-
-        if(!drag) return
-
-        let dx = e.clientX - startX
-        let dy = e.clientY - startY
-
-        el.style.left = origX + dx + "px"
-        el.style.top = origY + dy + "px"
-
-    })
-
-    window.addEventListener("mouseup", ()=>{
-        drag=false
-        el.style.cursor="grab"
-    })
-
-}
+window.addEventListener("mouseup", ()=> dragTarget = null)
 
 /* CATEGORIAS */
 
-document.querySelectorAll(".sidebar button")[0].onclick = ()=>{
-    world.style.background="#05070c"
-}
+document.querySelector(".sidebar").addEventListener("click", e => {
 
-document.querySelectorAll(".sidebar button")[1].onclick = ()=>{
-    world.style.background="url(https://i.imgur.com/7QZ6XKQ.png)"
-    world.style.backgroundSize="cover"
-}
+    if(e.target.tagName !== "BUTTON") return
 
-document.querySelectorAll(".sidebar button")[5].onclick = ()=>{
-    world.style.background="#222"
-}
+    const txt = e.target.innerText
+
+    if(txt === "Calendário"){
+
+        world.style.background = "white"
+
+        const grid = document.createElement("div")
+        grid.style.position="absolute"
+        grid.style.inset="0"
+        grid.style.backgroundImage =
+        "linear-gradient(#ddd 1px,transparent 1px),linear-gradient(90deg,#ddd 1px,transparent 1px)"
+        grid.style.backgroundSize="80px 80px"
+
+        world.innerHTML=""
+        world.appendChild(grid)
+
+    }
+
+    if(txt === "Mural"){
+        world.style.background="#222"
+    }
+
+})
 
 /* MOLDURAS */
 
-document.querySelectorAll(".rightPanel button")[0].onclick = ()=>{
-    if(!selected) return
-    selected.style.border="10px solid white"
-}
+document.querySelector(".rightPanel").addEventListener("click", e => {
 
-document.querySelectorAll(".rightPanel button")[1].onclick = ()=>{
+    if(e.target.tagName !== "BUTTON") return
     if(!selected) return
-    selected.style.border="4px solid cyan"
-    selected.style.boxShadow="0 0 30px cyan"
-}
 
-document.querySelectorAll(".rightPanel button")[2].onclick = ()=>{
-    if(!selected) return
-    selected.style.backdropFilter="blur(10px)"
-    selected.style.background="rgba(255,255,255,.2)"
-}
+    const txt = e.target.innerText
+
+    if(txt === "Polaroid"){
+        selected.style.border="12px solid white"
+    }
+
+    if(txt === "Neon"){
+        selected.style.border="4px solid cyan"
+        selected.style.boxShadow="0 0 40px cyan"
+    }
+
+    if(txt === "Glass"){
+        selected.style.background="rgba(255,255,255,.2)"
+        selected.style.backdropFilter="blur(6px)"
+    }
+
+})
