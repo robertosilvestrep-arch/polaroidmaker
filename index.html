@@ -1,527 +1,2036 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SGE/CRM Premium - Castseg Distribuidora Santos</title>
-    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
-    <link rel="stylesheet" href="[https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css](https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css)">
-    <script src="[https://apis.google.com/js/api.js](https://apis.google.com/js/api.js)" async defer></script>
-    <script src="[https://accounts.google.com/gsi/client](https://accounts.google.com/gsi/client)" async defer></script>
-    
-    <style>
-        @media print {
-            body * { visibility: hidden; }
-            #area-impressao-orcamento, #area-impressao-orcamento * { visibility: visible; }
-            #area-impressao-orcamento { position: absolute; left: 0; top: 0; width: 100%; box-shadow: none; border: none; }
-            .no-print { display: none !important; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Album Pages - Colagem Polaroid</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',sans-serif;background:#e8e4de;overflow:hidden}
+.app{display:flex;flex-direction:column;height:100vh;position:relative}
+.topbar{
+  background:#fff;border-bottom:1px solid #ddd;
+  padding:8px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  font-size:13px;
+}
+.topbar-title{font-weight:700;font-size:15px;color:#2c2c2a;margin-right:4px}
+.btn{
+  padding:5px 12px;border:1px solid #ccc;border-radius:5px;
+  background:#fff;color:#2c2c2a;font-size:12px;cursor:pointer;
+  display:inline-flex;align-items:center;gap:5px;white-space:nowrap;
+  transition:background .12s;
+}
+.btn:hover{background:#f5f5f3}
+.btn.export{background:#1a6b3a;color:#fff;border-color:#1a6b3a}
+.btn.export:hover{background:#1d7d44}
+.sep{width:1px;height:22px;background:#e0e0e0;flex-shrink:0}
+.main{display:flex;flex:1;overflow:hidden}
+.sidebar{
+  width:205px;min-width:205px;background:#fff;border-right:1px solid #ddd;
+  overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:12px;
+}
+.sec-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#888;margin-bottom:4px}
+.theme-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.theme-btn{
+  padding:6px 4px;border:1.5px solid #ddd;border-radius:6px;
+  cursor:pointer;text-align:center;font-size:10px;transition:all .15s;background:#fff;
+}
+.theme-btn:hover{border-color:#999}
+.theme-btn.active{border:2px solid #2c2c2a;background:#f5f5f3}
+.theme-icon{font-size:18px;display:block;margin-bottom:2px}
+.frame-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.frame-btn{
+  padding:5px 2px;border:1.5px solid #ddd;border-radius:5px;
+  cursor:pointer;text-align:center;font-size:9px;transition:all .15s;background:#fff;
+}
+.frame-btn:hover{border-color:#999}
+.frame-btn.active{border:2px solid #1a6b3a;background:#eaf7ef}
+.frame-icon{font-size:14px;display:block;margin-bottom:1px}
+.prop-row{margin-bottom:6px}
+.prop-label{font-size:11px;color:#666;margin-bottom:3px;display:block}
+.prop-input{
+  width:100%;padding:4px 7px;border:1px solid #ddd;border-radius:4px;
+  font-size:11px;background:#fafaf9;color:#2c2c2a;
+}
+select.prop-input{cursor:pointer}
+.canvas-area{
+  flex:1;overflow:auto;background:#9a9590;
+  display:flex;align-items:flex-start;justify-content:center;padding:20px;
+}
+.page-tabs{display:flex;gap:4px;margin-bottom:8px;flex-wrap:wrap}
+.page-tab{
+  padding:4px 10px;border:1px solid #bbb;border-radius:4px 4px 0 0;
+  cursor:pointer;font-size:11px;background:#c8c4be;color:#555;white-space:nowrap;
+}
+.page-tab.active{background:#fff;color:#2c2c2a;font-weight:700;border-bottom-color:#fff}
+.canvas-col{display:flex;flex-direction:column;align-items:center}
+.canvas-wrap{background:#fff;position:relative;box-shadow:0 6px 28px rgba(0,0,0,.28)}
+canvas{display:block;cursor:crosshair}
+.rightbar{
+  width:195px;min-width:195px;background:#fff;border-left:1px solid #ddd;
+  overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;
+}
+.color-row{display:flex;align-items:center;gap:6px}
+.color-swatch{width:30px;height:26px;border:1px solid #ddd;border-radius:3px;cursor:pointer;padding:2px}
+.range-row{display:flex;align-items:center;gap:5px}
+.range-row input[type=range]{flex:1}
+.range-row span{font-size:10px;color:#888;min-width:26px;text-align:right}
+.info-box{
+  font-size:10px;color:#888;background:#f8f7f5;border-radius:4px;
+  padding:6px 8px;line-height:1.5;border:1px solid #eee;
+}
+.upload-label{
+  display:block;width:100%;padding:8px;border:1.5px dashed #ccc;border-radius:6px;
+  text-align:center;cursor:pointer;font-size:11px;color:#888;transition:all .12s;
+}
+.upload-label:hover{border-color:#999;background:#fafaf9}
+.divhr{width:100%;height:1px;background:#eee;margin:2px 0}
+.btn.save{background:#1a4a8a;color:#fff;border-color:#1a4a8a}
+.btn.save:hover{background:#1e55a0}
+.modal-overlay{
+  display:none;position:absolute;inset:0;background:rgba(0,0,0,.55);
+  z-index:999;align-items:center;justify-content:center;
+}
+.modal-overlay.open{display:flex}
+.modal-box{
+  background:#fff;border-radius:10px;padding:0;
+  width:420px;max-width:95vw;max-height:80vh;
+  display:flex;flex-direction:column;overflow:hidden;
+  box-shadow:0 8px 40px rgba(0,0,0,.3);
+}
+.modal-head{
+  padding:14px 18px 10px;border-bottom:1px solid #eee;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.modal-head h3{font-size:14px;font-weight:700;color:#2c2c2a;margin:0}
+.modal-close{background:none;border:none;font-size:18px;cursor:pointer;color:#888;line-height:1;padding:2px 6px;border-radius:4px;}
+.modal-close:hover{background:#f5f5f3;color:#333}
+.modal-body{padding:14px 18px;overflow-y:auto;flex:1}
+.modal-footer{padding:10px 18px;border-top:1px solid #eee;display:flex;gap:8px;justify-content:flex-end}
+.project-list{display:flex;flex-direction:column;gap:6px;margin-top:4px}
+.project-item{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 10px;border:1px solid #e8e8e8;border-radius:6px;
+  background:#fafaf9;cursor:pointer;transition:all .12s;
+}
+.project-item:hover{border-color:#1a4a8a;background:#f0f4ff}
+.project-item .pi-icon{font-size:20px;flex-shrink:0}
+.project-item .pi-info{flex:1;min-width:0}
+.project-item .pi-name{font-size:12px;font-weight:600;color:#2c2c2a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.project-item .pi-meta{font-size:10px;color:#999;margin-top:1px}
+.project-item .pi-del{color:#e24b4a;background:none;border:none;cursor:pointer;font-size:14px;padding:2px 5px;border-radius:3px;flex-shrink:0;}
+.project-item .pi-del:hover{background:#fcebeb}
+.save-name-row{display:flex;gap:6px;margin-bottom:10px}
+.save-name-row input{flex:1;padding:6px 10px;border:1px solid #ddd;border-radius:5px;font-size:12px}
+.save-name-row button{padding:6px 14px;background:#1a4a8a;color:#fff;border:none;border-radius:5px;cursor:pointer;font-size:12px}
+.save-name-row button:hover{background:#1e55a0}
+.empty-msg{text-align:center;color:#bbb;font-size:12px;padding:20px 0}
+.toast{
+  position:absolute;bottom:24px;left:50%;transform:translateX(-50%);
+  background:#2c2c2a;color:#fff;padding:8px 18px;border-radius:20px;
+  font-size:12px;pointer-events:none;opacity:0;transition:opacity .25s;z-index:1001;white-space:nowrap;
+}
+.toast.show{opacity:1}
+.sticker-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;max-height:280px;overflow-y:auto;padding:2px}
+.sticker-btn{
+  padding:8px 4px;border:1.5px solid #ddd;border-radius:5px;
+  cursor:pointer;text-align:center;font-size:24px;transition:all .15s;background:#fff;
+  aspect-ratio:1;display:flex;align-items:center;justify-content:center;
+}
+.sticker-btn:hover{border-color:#999;background:#fafaf9;transform:scale(1.08)}
+.sticker-btn:active{transform:scale(0.95)}
+</style>
 </head>
-<body class="bg-slate-50 font-sans flex flex-col h-screen overflow-hidden text-slate-800">
+<body>
+<div class="app">
+<div class="topbar">
+  <span class="topbar-title">📖 Album Pages</span>
+  <div class="sep"></div>
+  <button class="btn" id="addPageBtn">+ Página</button>
+  <button class="btn" id="addCoverBtn">+ Capa</button>
+  <button class="btn" id="dupPageBtn">⧉ Duplicar</button>
+  <div class="sep"></div>
+  <button class="btn" id="addFrameCanvasBtn">+ Moldura</button>
+  <button class="btn" id="addTextCanvasBtn">✏ Texto</button>
+  <button class="btn" id="addStickerBtn">🎨 Adesivo</button>
+  <button class="btn" id="delItemBtn">✕ Deletar</button>
+  <div class="sep"></div>
+  <button class="btn" id="rotLBtn">↺ -15°</button>
+  <button class="btn" id="rotRBtn">↻ +15°</button>
+  <button class="btn" id="frontBtn">▲ Frente</button>
+  <button class="btn" id="backBtn">▼ Trás</button>
+  <div class="sep"></div>
+  <button class="btn export" id="exportPdfPortraitBtn">PDF A4 ↕</button>
+  <button class="btn export" id="exportPdfLandscapeBtn">PDF A4 ↔</button>
+  <button class="btn export" id="exportPngBtn">⬇ PNG</button>
+  <div class="sep"></div>
+  <button class="btn save" id="saveProjectBtn">💾 Salvar</button>
+  <button class="btn save" id="openProjectBtn">📂 Projetos</button>
+  <button class="btn save" id="exportJsonBtn">⬇ .json</button>
+  <label class="btn save" id="importJsonLabel" title="Importar projeto .json">
+    ⬆ Importar
+    <input type="file" id="importJsonInput" accept=".json" style="display:none">
+  </label>
+</div>
 
-    <header class="bg-slate-900 text-white p-4 px-6 flex flex-wrap justify-between items-center shadow-lg z-50 no-print">
-        
-        <div class="flex items-center gap-3">
-            <div class="bg-white p-1 rounded shadow flex items-center justify-center h-10 w-32 overflow-hidden">
-                <svg viewBox="0 0 300 70" class="h-8 w-full">
-                    <text x="10" y="50" font-family="'Arial Black', Gadget, sans-serif" font-size="44" font-style="italic" font-weight="900" fill="#003366">CAST</text>
-                    <text x="145" y="50" font-family="'Arial', Helvetica, sans-serif" font-size="44" font-style="italic" font-weight="500" fill="#003366">SEG</text>
-                    <polygon points="50,52 64,22 78,52" fill="#7F8C8D" />
-                    <polygon points="55,52 64,30 73,52" fill="#FFFFFF" />
-                </svg>
-            </div>
-            <div class="hidden md:block border-l border-slate-700 pl-3">
-                <div class="text-[10px] uppercase font-bold tracking-widest text-orange-500">Distribuidora</div>
-                <div class="text-[9px] text-slate-400">Santos / SP</div>
-            </div>
-        </div>
-
-        <nav class="flex flex-wrap items-center gap-1 bg-slate-950 p-1.5 rounded-xl border border-slate-800">
-            <button onclick="mudarModulo('kanban')" id="btn-nav-kanban" class="px-4 py-2 rounded-lg font-semibold text-xs transition flex items-center gap-2 bg-blue-900 text-white">
-                <i class="fa-solid fa-table-columns"></i> Funil de Leads
-            </button>
-            <button onclick="mudarModulo('clientes')" id="btn-nav-clientes" class="px-4 py-2 rounded-lg font-semibold text-xs transition flex items-center gap-2 text-slate-400 hover:text-white">
-                <i class="fa-solid fa-address-book"></i> Clientes (CPF/CNPJ)
-            </button>
-            <button onclick="mudarModulo('estoque')" id="btn-nav-estoque" class="px-4 py-2 rounded-lg font-semibold text-xs transition flex items-center gap-2 text-slate-400 hover:text-white">
-                <i class="fa-solid fa-boxes-stacked"></i> Estoque / Materiais
-            </button>
-            <button onclick="mudarModulo('agenda')" id="btn-nav-agenda" class="px-4 py-2 rounded-lg font-semibold text-xs transition flex items-center gap-2 text-slate-400 hover:text-white">
-                <i class="fa-solid fa-calendar-check"></i> Google Agenda
-            </button>
-            <button onclick="mudarModulo('jucesp')" id="btn-nav-jucesp" class="px-4 py-2 rounded-lg font-semibold text-xs transition flex items-center gap-2 text-slate-400 hover:text-white">
-                <i class="fa-solid fa-magnifying-glass-chart"></i> Radar Jucesp
-            </button>
-            <button onclick="mudarModulo('orcamentos')" id="btn-nav-orcamentos" class="px-4 py-2 rounded-lg font-semibold text-xs transition flex items-center gap-2 text-slate-400 hover:text-white">
-                <i class="fa-solid fa-file-invoice-dollar"></i> Orçamentos
-            </button>
-        </nav>
-    </header>
-
-    <div class="bg-white border-b shadow-sm p-4 px-8 flex justify-between items-center no-print">
-        <h2 id="titulo-modulo" class="text-sm font-bold text-slate-700 uppercase tracking-wider">Funil de Captação (Leads)</h2>
-        <div id="botoes-acao">
-            <button onclick="toggleModalLead(true)" class="bg-blue-900 hover:bg-blue-800 text-white font-bold py-1.5 px-4 rounded shadow text-xs transition flex items-center gap-2">
-                <i class="fa-solid fa-plus"></i> Novo Lead
-            </button>
-        </div>
+<!-- MODAL: Gerenciar Projetos -->
+<div class="modal-overlay" id="projectModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3>📁 Meus Projetos</h3>
+      <button class="modal-close" id="closeModalBtn">✕</button>
     </div>
-
-    <main class="flex-1 overflow-y-auto p-6">
-        
-        <section id="mod-kanban" class="modulo-content">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div class="bg-slate-200/60 p-4 rounded-xl border border-slate-300">
-                    <h3 class="font-bold text-slate-700 mb-3 flex justify-between items-center border-b-2 border-blue-500 pb-2 text-xs uppercase tracking-wider">Novo <span id="count-novo" class="bg-blue-500 text-white text-[10px] px-2 py-0.5 rounded-full">0</span></h3>
-                    <div id="col-novo" class="space-y-3 min-h-[400px]"></div>
-                </div>
-                <div class="bg-slate-200/60 p-4 rounded-xl border border-slate-300">
-                    <h3 class="font-bold text-slate-700 mb-3 flex justify-between items-center border-b-2 border-yellow-500 pb-2 text-xs uppercase tracking-wider">Contato <span id="count-contato" class="bg-yellow-500 text-white text-[10px] px-2 py-0.5 rounded-full">0</span></h3>
-                    <div id="col-contato" class="space-y-3 min-h-[400px]"></div>
-                </div>
-                <div class="bg-slate-200/60 p-4 rounded-xl border border-slate-300">
-                    <h3 class="font-bold text-slate-700 mb-3 flex justify-between items-center border-b-2 border-orange-500 pb-2 text-xs uppercase tracking-wider">Proposta <span id="count-proposta" class="bg-orange-500 text-white text-[10px] px-2 py-0.5 rounded-full">0</span></h3>
-                    <div id="col-proposta" class="space-y-3 min-h-[400px]"></div>
-                </div>
-                <div class="bg-slate-200/60 p-4 rounded-xl border border-slate-300">
-                    <h3 class="font-bold text-slate-700 mb-3 flex justify-between items-center border-b-2 border-green-500 pb-2 text-xs uppercase tracking-wider">Fechado <span id="count-ganho" class="bg-green-500 text-white text-[10px] px-2 py-0.5 rounded-full">0</span></h3>
-                    <div id="col-ganho" class="space-y-3 min-h-[400px]"></div>
-                </div>
-            </div>
-        </section>
-
-        <section id="mod-clientes" class="modulo-content hidden">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 lg:col-span-1">
-                    <h3 class="font-bold text-xs mb-4 text-slate-800 border-b pb-2 uppercase tracking-wider">Homologar Novo Cliente</h3>
-                    <form onsubmit="salvarNovoCliente(event)" id="formCliente" class="space-y-3">
-                        <div>
-                            <label class="block text-[11px] font-bold mb-1 text-slate-600">Tipo de Inscrição</label>
-                            <select id="c-tipo-doc" onchange="ajustarTipoDocumento()" class="w-full border p-2 rounded text-xs bg-gray-50 outline-none">
-                                <option value="CNPJ">Pessoa Jurídica (CNPJ)</option>
-                                <option value="CPF">Pessoa Física (CPF)</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label id="label-doc" class="block text-[11px] font-bold mb-1 text-slate-600">CNPJ (Apenas números)</label>
-                            <div class="flex gap-2">
-                                <input type="text" id="c-documento" placeholder="Ex: 00000000000100" required class="flex-1 border p-2 rounded text-xs outline-none focus:border-blue-500">
-                                <button type="button" id="btn-consulta-cnpj" onclick="consultarCNPJReal()" class="bg-blue-900 text-white px-3 rounded hover:bg-blue-800 text-xs"><i class="fa-solid fa-magnifying-glass"></i></button>
-                            </div>
-                        </div>
-                        <div>
-                            <label id="label-nome" class="block text-[11px] font-bold mb-1 text-slate-600">Razão Social / Nome Comercial</label>
-                            <input type="text" id="c-nome" required class="w-full border p-2 rounded text-xs outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] font-bold mb-1 text-slate-600">WhatsApp / Telefone</label>
-                            <input type="tel" id="c-tel" required class="w-full border p-2 rounded text-xs outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] font-bold mb-1 text-slate-600">E-mail de Contato</label>
-                            <input type="email" id="c-email" required class="w-full border p-2 rounded text-xs outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] font-bold mb-1 text-slate-600">Endereço de Entrega</label>
-                            <input type="text" id="c-endereco" class="w-full border p-2 rounded text-xs bg-gray-50 outline-none">
-                        </div>
-                        <button type="submit" class="w-full bg-green-600 text-white py-2 rounded font-bold text-xs hover:bg-green-700 transition">Salvar Cadastro</button>
-                    </form>
-                </div>
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 lg:col-span-2 overflow-x-auto">
-                    <h3 class="font-bold text-xs mb-4 text-slate-800 border-b pb-2 uppercase tracking-wider">Base de Clientes Homologados</h3>
-                    <table class="w-full text-left border-collapse text-xs">
-                        <thead>
-                            <tr class="bg-slate-100 text-slate-700 font-bold border-b"><th class="p-3">Nome / Empresa</th><th class="p-3">Identificação</th><th class="p-3">Contato</th><th class="p-3">Ações</th></tr>
-                        </thead>
-                        <tbody id="tabela-clientes-corpo"></tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <section id="mod-estoque" class="modulo-content hidden">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 lg:col-span-1">
-                    <h3 class="font-bold text-xs mb-4 text-slate-800 border-b pb-2 uppercase tracking-wider">Novo Equipamento</h3>
-                    <form onsubmit="salvarNovoProduto(event)" id="formEstoque" class="space-y-3">
-                        <div>
-                            <label class="block text-[11px] font-bold mb-1 text-slate-600">Código de Fábrica (SKU)</label>
-                            <input type="text" id="e-id" placeholder="Ex: CAM-IP-01" required class="w-full border p-2 rounded text-xs outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] font-bold mb-1 text-slate-600">Descrição Técnica</label>
-                            <input type="text" id="e-nome" placeholder="Ex: Câmera Castseg Dome 2MP" required class="w-full border p-2 rounded text-xs outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] font-bold mb-1 text-slate-600">Tabela Distribuição (R$)</label>
-                            <input type="number" step="0.01" id="e-preco" placeholder="0.00" required class="w-full border p-2 rounded text-xs outline-none">
-                        </div>
-                        <button type="submit" class="w-full bg-blue-900 text-white py-2 rounded font-bold text-xs hover:bg-blue-800 transition">Adicionar ao Catálogo</button>
-                    </form>
-                </div>
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 lg:col-span-2 overflow-x-auto">
-                    <h3 class="font-bold text-xs mb-4 text-slate-800 border-b pb-2 uppercase tracking-wider">Equipamentos em Catálogo</h3>
-                    <table class="w-full text-left text-xs">
-                        <thead>
-                            <tr class="bg-slate-100 text-slate-700 font-bold border-b"><th class="p-3">Código</th><th class="p-3">Descrição do Material</th><th class="p-3">Preço Unitário</th><th class="p-3">Ação</th></tr>
-                        </thead>
-                        <tbody id="tabela-estoque-corpo"></tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <section id="mod-orcamentos" class="modulo-content hidden">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 lg:col-span-1 no-print">
-                    <h3 class="font-bold text-xs mb-4 text-slate-800 border-b pb-2 uppercase tracking-wider">Montar Proposta</h3>
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-[11px] font-bold mb-1 text-slate-600">Selecionar Destinatário</label>
-                            <select id="orc-cliente-select" class="w-full border p-2 rounded text-xs bg-gray-50 outline-none focus:ring-2 focus:ring-blue-500"></select>
-                        </div>
-                        <div>
-                            <label class="block text-[11px] font-bold mb-1 text-slate-600">Adicionar Componente</label>
-                            <select id="orc-produto-select" onchange="adicionarProdutoAoOrcamento()" class="w-full border p-2 rounded text-xs bg-gray-50 outline-none focus:ring-2 focus:ring-blue-500"><option value="">Escolha um produto...</option></select>
-                        </div>
-                    </div>
-                    <div class="mt-6 space-y-2">
-                        <button onclick="window.print()" class="w-full bg-slate-900 text-white p-2.5 rounded font-bold text-xs hover:bg-slate-800 transition flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-file-pdf"></i> Imprimir / Salvar PDF
-                        </button>
-                        <button onclick="enviarOrcamentoEmail()" class="w-full bg-blue-600 text-white p-2.5 rounded font-bold text-xs hover:bg-blue-700 transition flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-paper-plane"></i> Enviar por E-mail
-                        </button>
-                    </div>
-                </div>
-
-                <div class="lg:col-span-2 bg-white p-8 rounded-xl shadow-lg border border-gray-300" id="area-impressao-orcamento">
-                    <div class="flex justify-between items-center border-b-2 border-slate-900 pb-4 mb-6">
-                        <div class="bg-white p-1 rounded border flex items-center justify-center h-10 w-32">
-                            <svg viewBox="0 0 300 70" class="h-8 w-full">
-                                <text x="10" y="50" font-family="'Arial Black', Gadget, sans-serif" font-size="44" font-style="italic" font-weight="900" fill="#003366">CAST</text>
-                                <text x="145" y="50" font-family="'Arial', Helvetica, sans-serif" font-size="44" font-style="italic" font-weight="500" fill="#003366">SEG</text>
-                                <polygon points="50,52 64,22 78,52" fill="#7F8C8D" />
-                                <polygon points="55,52 64,30 73,52" fill="#FFFFFF" />
-                            </svg>
-                        </div>
-                        <div class="text-right text-[10px] text-gray-600">
-                            <p class="font-bold text-xs text-slate-800">PROPOSTA COMERCIAL</p>
-                            <p>Data: <span id="orc-data-atual">--/--/----</span></p>
-                            <p>Validade: 15 dias</p>
-                        </div>
-                    </div>
-                    <div class="mb-6 bg-slate-50 p-4 rounded border">
-                        <h4 class="text-[9px] font-bold uppercase tracking-wider text-slate-500 mb-1">Dados do Cliente</h4>
-                        <p class="font-bold text-sm text-slate-800" id="print-cliente-nome">Nenhum parceiro selecionado</p>
-                        <div class="grid grid-cols-2 gap-2 text-xs text-gray-600 mt-1">
-                            <p>📞 Tel: <span id="print-cliente-tel">-</span></p>
-                            <p>✉️ E-mail: <span id="print-cliente-email">-</span></p>
-                        </div>
-                    </div>
-                    <table class="w-full text-left text-xs mb-6">
-                        <thead><tr class="bg-slate-900 text-white font-bold uppercase text-[10px]"><th class="p-2">Item Técnico</th><th class="p-2 text-right">Preço de Tabela</th></tr></thead>
-                        <tbody id="print-itens-corpo" class="divide-y"><tr><td class="p-2 text-gray-400 italic" colspan="2">Nenhum componente adicionado à lista técnica.</td></tr></tbody>
-                    </table>
-                    <div class="text-right border-t border-slate-900 pt-4"><span class="text-xs text-slate-600 font-bold mr-4">VALOR LÍQUIDO DA PROPOSTA:</span><span class="text-base font-black text-blue-900" id="print-total-valor">R$ 0,00</span></div>
-                </div>
-            </div>
-        </section>
-
-        <section id="mod-agenda" class="modulo-content hidden">
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 max-w-xl">
-                <h3 class="font-bold text-xs text-slate-800 mb-2 uppercase tracking-wider"><i class="fa-brands fa-google text-red-500 mr-2"></i>Google Calendar Linkage</h3>
-                <p class="text-xs text-gray-500 mb-4">Sincronize as demonstrações de sistemas e visitas técnicas diretamente no calendário corporativo.</p>
-                <div class="space-y-2">
-                    <button onclick="authGoogle()" class="bg-red-600 text-white text-xs font-bold py-2 px-4 rounded shadow hover:bg-red-700 transition">Sincronizar Conta Google</button>
-                    <div id="status-google" class="text-[11px] text-gray-500 italic mt-2">Status: Pronto para conexão.</div>
-                </div>
-            </div>
-        </section>
-
-        <section id="mod-jucesp" class="modulo-content hidden">
-            <div class="bg-slate-900 text-white p-6 rounded-xl shadow-sm max-w-xl flex flex-col justify-between">
-                <div>
-                    <h3 class="font-bold text-xs text-orange-400 mb-2 uppercase tracking-wider"><i class="fa-solid fa-magnifying-glass-chart mr-2"></i>Mapeamento Técnico de Mercado (Jucesp)</h3>
-                    <p class="text-xs text-slate-300 leading-relaxed">Monitore preventivamente a constituição de novos condomínios comerciais e residenciais na Baixada Santista para oferta de infraestrutura de CFTV e controle de acesso.</p>
-                </div>
-                <a href="[https://www.jucesponline.sp.gov.br/](https://www.jucesponline.sp.gov.br/)" target="_blank" class="block w-full bg-blue-600 text-center py-2 rounded font-bold text-xs hover:bg-blue-700 transition mt-6">Acessar Painel Oficial JUCESP <i class="fa-solid fa-arrow-up-right-from-square ml-1 text-[10px]"></i></a>
-            </div>
-        </section>
-
-    </main>
-
-    <div id="modalLead" class="fixed inset-0 bg-slate-900/60 hidden flex items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-xl p-6 w-full max-w-md shadow-2xl">
-            <h3 class="text-sm font-bold mb-4 text-slate-800 uppercase tracking-wider">Nova Entrada no Funil</h3>
-            <form onsubmit="salvarNovoLead(event)" id="formLead">
-                <div class="space-y-3">
-                    <div><label class="block text-[11px] font-bold mb-1">Empresa / Prospecção</label><input type="text" id="l-nome" required class="w-full border p-2 rounded text-xs outline-none"></div>
-                    <div><label class="block text-[11px] font-bold mb-1">WhatsApp</label><input type="tel" id="l-tel" required class="w-full border p-2 rounded text-xs outline-none"></div>
-                    <div><label class="block text-[11px] font-bold mb-1">E-mail</label><input type="email" id="l-email" required class="w-full border p-2 rounded text-xs outline-none"></div>
-                </div>
-                <div class="flex justify-end gap-2 mt-6">
-                    <button type="button" onclick="toggleModalLead(false)" class="bg-gray-300 px-4 py-2 rounded text-xs font-semibold">Descartar</button>
-                    <button type="submit" class="bg-blue-900 text-white px-4 py-2 rounded text-xs font-semibold">Salvar</button>
-                </div>
-            </form>
-        </div>
+    <div class="modal-body">
+      <div class="save-name-row">
+        <input type="text" id="projectNameInput" placeholder="Nome do projeto..." maxlength="60">
+        <button id="saveNewBtn">💾 Salvar</button>
+      </div>
+      <div class="sec-title" style="margin-bottom:8px">Projetos salvos</div>
+      <div class="project-list" id="projectList"></div>
     </div>
+    <div class="modal-footer">
+      <button class="btn" id="closeModal2Btn">Fechar</button>
+    </div>
+  </div>
+</div>
 
-    <script>
-        let leads = JSON.parse(localStorage.getItem('cs_leads')) || [];
-        let clientes = JSON.parse(localStorage.getItem('cs_clientes')) || [];
-        let estoque = JSON.parse(localStorage.getItem('cs_stock')) || [
-            { id: 'CAM1', nome: 'Câmera Bullet Infra HD Castseg', preco: 89.90 },
-            { id: 'DVR4', nome: 'Multi-DVR Castseg 4 Canais 1080p', preco: 249.00 }
-        ];
-        let itensOrcamentoCorrente = [];
-        let tokenClient;
 
-        function ajustarTipoDocumento() {
-            const tipo = document.getElementById('c-tipo-doc').value;
-            const labelDoc = document.getElementById('label-doc');
-            const labelNome = document.getElementById('label-nome');
-            const btnConsulta = document.getElementById('btn-consulta-cnpj');
-            const inputDoc = document.getElementById('c-documento');
+<!-- MODAL: Biblioteca de Adesivos -->
+<div class="modal-overlay" id="stickerModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3>🎨 Biblioteca de Adesivos</h3>
+      <button class="modal-close" id="closeStickerModalBtn">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="sec-title">Corações & Amor</div>
+      <div class="sticker-grid" id="stickerGridHearts"></div>
+      <div class="divhr" style="margin:10px 0"></div>
+      
+      <div class="sec-title">Estrelas & Brilhos</div>
+      <div class="sticker-grid" id="stickerGridStars"></div>
+      <div class="divhr" style="margin:10px 0"></div>
+      
+      <div class="sec-title">Flores & Natureza</div>
+      <div class="sticker-grid" id="stickerGridNature"></div>
+      <div class="divhr" style="margin:10px 0"></div>
+      
+      <div class="sec-title">Emojis & Faces</div>
+      <div class="sticker-grid" id="stickerGridEmojis"></div>
+      <div class="divhr" style="margin:10px 0"></div>
+      
+      <div class="sec-title">Formas & Símbolos</div>
+      <div class="sticker-grid" id="stickerGridShapes"></div>
+      <div class="divhr" style="margin:10px 0"></div>
+      
+      <div class="sec-title">Diversos</div>
+      <div class="sticker-grid" id="stickerGridMisc"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" id="closeStickerModal2Btn">Fechar</button>
+    </div>
+  </div>
+</div>
 
-            if (tipo === 'CPF') {
-                labelDoc.innerText = "CPF (Apenas números)";
-                labelNome.innerText = "Nome Completo do Cliente";
-                btnConsulta.style.display = 'none';
-                inputDoc.placeholder = "Ex: 00000000000";
-            } else {
-                labelDoc.innerText = "CNPJ (Apenas números)";
-                labelNome.innerText = "Razão Social / Nome Comercial";
-                btnConsulta.style.display = 'block';
-                inputDoc.placeholder = "Ex: 00000000000100";
-            }
-        }
+<!-- Toast notification -->
+<div class="toast" id="toast"></div>
 
-        function consultarCNPJReal() {
-            const cnpj = document.getElementById('c-documento').value.replace(/\D/g, '');
-            if (cnpj.length !== 14) {
-                alert("Insira um CNPJ válido com 14 dígitos.");
-                return;
-            }
-            document.getElementById('c-nome').value = "Buscando dados na Receita...";
-            const script = document.createElement('script');
-            script.src = `https://receitaws.com.br/v1/cnpj/${cnpj}?callback=processarCNPJ`;
-            document.body.appendChild(script);
-        }
+<div class="main">
 
-        function processarCNPJ(data) {
-            if (data.status === "ERROR" || !data.nome) {
-                alert("Não foi possível localizar o CNPJ ou limite de requisições atingido.");
-                document.getElementById('c-nome').value = "";
-                return;
-            }
-            document.getElementById('c-nome').value = data.nome;
-            document.getElementById('c-email').value = data.email || "";
-            document.getElementById('c-tel').value = data.telefone || "";
-            document.getElementById('c-endereco').value = `${data.logradouro}, ${data.numero} - ${data.municipio}/${data.uf}`;
-        }
+<!-- SIDEBAR ESQUERDA -->
+<div class="sidebar">
+  <div>
+    <div class="sec-title">Tema da página</div>
+    <div class="theme-grid" id="themeGrid"></div>
+  </div>
+  <div class="divhr"></div>
+  <div>
+    <div class="sec-title">Formato do canvas</div>
+    <select class="prop-input" id="formatSel">
+      <option value="portrait">A4 Retrato (210×297mm)</option>
+      <option value="landscape">A4 Paisagem (297×210mm)</option>
+    </select>
+  </div>
+  <div class="divhr"></div>
+  <div>
+    <div class="sec-title">Tipo de moldura</div>
+    <div class="frame-grid" id="frameGrid"></div>
+  </div>
+  <div class="divhr"></div>
+  <div>
+    <div class="sec-title">Adicionar foto à moldura</div>
+    <label class="upload-label">
+      📁 Selecionar foto
+      <input type="file" accept="image/*" id="photoFileInput" style="display:none">
+    </label>
+    <div class="info-box" id="uploadHint" style="margin-top:5px">
+      1. Selecione uma moldura na página<br>2. Clique acima para adicionar foto
+    </div>
+  </div>
+</div>
 
-        function initGoogleAuth() {
-            if(window.location.protocol === 'file:') return;
-            tokenClient = google.accounts.oauth2.initTokenClient({
-                client_id: '730601820523-g6gr1bh451f7u81fqnmbtdiib6o6181a.apps.googleusercontent.com',
-                scope: '[https://www.googleapis.com/auth/calendar.events](https://www.googleapis.com/auth/calendar.events)',
-                callback: (tokenResponse) => {
-                    if (tokenResponse.access_token) {
-                        document.getElementById('status-google').innerText = "Status: Autenticado com o Google Agenda!";
-                        document.getElementById('status-google').className = "text-xs text-green-600 font-bold mt-2";
-                    }
-                },
-            });
-        }
+<!-- CANVAS CENTRAL -->
+<div class="canvas-area" id="canvasArea">
+  <div class="canvas-col">
+    <div class="page-tabs" id="pageTabs"></div>
+    <div class="canvas-wrap" id="canvasWrap">
+      <canvas id="mainCanvas"></canvas>
+    </div>
+    <div style="margin-top:8px;font-size:11px;color:#ddd;text-align:center">
+      Clique para selecionar • Arrastar para mover • Duplo-clique para editar texto
+    </div>
+  </div>
+</div>
 
-        function authGoogle() {
-            if(window.location.protocol === 'file:') {
-                alert("Erro de Protocolo: O Google rejeita autenticação local. Utilize o endereço público do seu repositório GitHub Pages para habilitar o login.");
-                return;
-            }
-            if (!tokenClient) initGoogleAuth();
-            tokenClient.requestAccessToken({prompt: 'consent'});
-        }
+<!-- SIDEBAR DIREITA -->
+<div class="rightbar">
+  <div>
+    <div class="sec-title">Borda de encadernação</div>
+    <div class="prop-row">
+      <span class="prop-label">Lado</span>
+      <select class="prop-input" id="bindSide">
+        <option value="left">Esquerda</option>
+        <option value="right">Direita</option>
+        <option value="none">Nenhuma</option>
+      </select>
+    </div>
+    <div class="prop-row">
+      <span class="prop-label">Largura</span>
+      <div class="range-row">
+        <input type="range" min="10" max="50" value="20" id="bindWidth" step="1">
+        <span id="bindWidthVal">20mm</span>
+      </div>
+    </div>
+    <div class="prop-row">
+      <span class="prop-label">Cor da borda</span>
+      <div class="color-row">
+        <input type="color" class="color-swatch" id="bindColor" value="#e8d5b0">
+        <span style="font-size:10px;color:#999">encad.</span>
+      </div>
+    </div>
+  </div>
 
-        function salvarNovoProduto(event) {
-            event.preventDefault();
-            const prod = {
-                id: document.getElementById('e-id').value.toUpperCase(),
-                nome: document.getElementById('e-nome').value,
-                preco: parseFloat(document.getElementById('e-preco').value)
-            };
-            estoque.push(prod);
-            localStorage.setItem('cs_stock', JSON.stringify(estoque));
-            document.getElementById('formEstoque').reset();
-            renderEstoque();
-            atualizarSelectsOrcamento();
-        }
+  <div class="divhr"></div>
 
-        function removerProduto(id) {
-            estoque = estoque.filter(p => p.id !== id);
-            localStorage.setItem('cs_stock', JSON.stringify(estoque));
-            renderEstoque();
-            atualizarSelectsOrcamento();
-        }
+  <div id="coverEditSection" style="display:none">
+    <div class="sec-title">✏ Editar título da capa</div>
+    <div class="prop-row">
+      <span class="prop-label">Título principal</span>
+      <input type="text" class="prop-input" id="coverTitleInput" placeholder="Título da capa...">
+    </div>
+    <div class="prop-row">
+      <span class="prop-label">Subtítulo</span>
+      <input type="text" class="prop-input" id="coverSubtitleInput" placeholder="Subtítulo...">
+    </div>
+    <div class="prop-row">
+      <span class="prop-label">Fonte</span>
+      <select class="prop-input" id="coverFontInput">
+        <option value="">Padrão do tema</option>
+        <option value="Georgia">Georgia</option>
+        <option value="Arial">Arial</option>
+        <option value="'Times New Roman'">Times New Roman</option>
+        <option value="'Courier New'">Courier New</option>
+        <option value="Verdana">Verdana</option>
+        <option value="'Palatino Linotype'">Palatino</option>
+        <option value="'Trebuchet MS'">Trebuchet</option>
+      </select>
+    </div>
+    <div class="prop-row">
+      <span class="prop-label">Tamanho título</span>
+      <div class="range-row">
+        <input type="range" min="20" max="100" value="56" id="coverTitleSizeInput" step="1">
+        <span id="coverTitleSizeVal">56</span>
+      </div>
+    </div>
+    <div class="prop-row">
+      <span class="prop-label">Cor do título</span>
+      <div class="color-row">
+        <input type="color" class="color-swatch" id="coverTitleColorInput" value="#ffffff">
+        <span style="font-size:10px;color:#999">título</span>
+      </div>
+    </div>
+    <div class="prop-row">
+      <span class="prop-label">Cor do subtítulo</span>
+      <div class="color-row">
+        <input type="color" class="color-swatch" id="coverSubtitleColorInput" value="#cccccc">
+        <span style="font-size:10px;color:#999">subtítulo</span>
+      </div>
+    </div>
+    <button class="btn" id="resetCoverTitleBtn" style="width:100%;justify-content:center;margin-top:2px">↺ Restaurar padrão</button>
+  </div>
 
-        function renderEstoque() {
-            let html = '';
-            estoque.forEach(p => {
-                html += `<tr class="border-b"><td class="p-3 font-mono font-bold text-slate-600">${p.id}</td><td class="p-3 text-slate-700">${p.nome}</td><td class="p-3 font-semibold text-blue-900">R$ ${p.preco.toFixed(2)}</td><td class="p-3"><button onclick="removerProduto('${p.id}')" class="text-xs text-red-500 hover:underline">Remover</button></td></tr>`;
-            });
-            document.getElementById('tabela-estoque-corpo').innerHTML = html;
-        }
+  <div class="divhr"></div>
 
-        function salvarNovoCliente(event) {
-            event.preventDefault();
-            const cliente = {
-                id: Date.now(),
-                nome: document.getElementById('c-nome').value,
-                documento: document.getElementById('c-documento').value,
-                tipo: document.getElementById('c-tipo-doc').value,
-                tel: document.getElementById('c-tel').value,
-                email: document.getElementById('c-email').value
-            };
-            clientes.push(cliente);
-            localStorage.setItem('cs_clientes', JSON.stringify(clientes));
-            document.getElementById('formCliente').reset();
-            ajustarTipoDocumento();
-            renderClientes();
-            atualizarSelectsOrcamento();
-        }
+  <div>
+    <div class="sec-title">Item selecionado</div>
+    <div class="info-box" id="selInfo">Nenhum item selecionado</div>
+    <div id="itemProps" style="display:none;margin-top:8px">
+      <div class="prop-row" id="legendPropRow">
+        <span class="prop-label">Legenda</span>
+        <input type="text" class="prop-input" id="legendProp" placeholder="Legenda da foto...">
+      </div>
+      <div class="prop-row" id="textContentRow" style="display:none">
+        <span class="prop-label">Texto</span>
+        <input type="text" class="prop-input" id="textContentProp" placeholder="Digite o texto...">
+      </div>
+      <div class="prop-row">
+        <span class="prop-label">Rotação manual</span>
+        <div class="range-row">
+          <input type="range" min="-45" max="45" value="0" id="rotProp" step="1">
+          <span id="rotPropVal">0°</span>
+        </div>
+      </div>
+      <div class="prop-row" id="fontPropRow">
+        <span class="prop-label">Fonte</span>
+        <select class="prop-input" id="fontProp">
+          <option value="Georgia">Georgia</option>
+          <option value="'Courier New'">Courier New</option>
+          <option value="Arial">Arial</option>
+          <option value="'Times New Roman'">Times New Roman</option>
+          <option value="Verdana">Verdana</option>
+          <option value="'Palatino Linotype'">Palatino</option>
+        </select>
+      </div>
+      <div class="prop-row" id="fontSizePropRow">
+        <span class="prop-label">Tamanho da fonte</span>
+        <div class="range-row">
+          <input type="range" min="8" max="60" value="14" id="fontSizeProp" step="1">
+          <span id="fontSizePropVal">14px</span>
+        </div>
+      </div>
+      <div class="prop-row" id="colorPropRow">
+        <span class="prop-label">Cor do texto</span>
+        <div class="color-row">
+          <input type="color" class="color-swatch" id="textColorProp" value="#333333">
+        </div>
+      </div>
+      <div class="prop-row" id="frameSizePropRow">
+        <span class="prop-label">Largura da moldura</span>
+        <div class="range-row">
+          <input type="range" min="60" max="340" value="130" id="frameSizeProp" step="1">
+          <span id="frameSizePropVal">130px</span>
+        </div>
+      </div>
+      <div class="prop-row" id="shadowPropRow">
+        <span class="prop-label">Sombra</span>
+        <div class="range-row">
+          <input type="range" min="0" max="30" value="8" id="shadowProp" step="1">
+          <span id="shadowPropVal">8</span>
+        </div>
+      </div>
+      <div class="prop-row" id="filterPropRow">
+        <span class="prop-label">Filtro de foto</span>
+        <select class="prop-input" id="filterProp">
+          <option value="none">Normal</option>
+          <option value="grayscale">Preto e Branco</option>
+          <option value="sepia">Sépia</option>
+          <option value="vintage">Vintage</option>
+          <option value="warm">Tom quente</option>
+          <option value="cold">Tom frio</option>
+        </select>
+      </div>
+    </div>
+  </div>
 
-        function removerCliente(id) {
-            clientes = clientes.filter(c => c.id !== id);
-            localStorage.setItem('cs_clientes', JSON.stringify(clientes));
-            renderClientes();
-            atualizarSelectsOrcamento();
-        }
+  <div class="divhr"></div>
 
-        function renderClientes() {
-            let html = '';
-            clientes.forEach(c => {
-                html += `<tr class="border-b hover:bg-gray-50"><td class="p-3 font-semibold text-slate-800">${c.nome}</td><td class="p-3 font-mono text-xs"><span class="bg-gray-200 px-1.5 py-0.5 rounded text-[10px] font-bold mr-1">${c.tipo}</span>${c.documento}</td><td class="p-3">${c.tel}</td><td class="p-3"><button onclick="removerCliente(${c.id})" class="text-xs text-red-500 hover:underline">Remover</button></td></tr>`;
-            });
-            document.getElementById('tabela-clientes-corpo').innerHTML = html || '<tr><td colspan="4" class="p-4 text-center text-gray-400">Nenhum cliente cadastrado.</td></tr>';
-        }
+  <div>
+    <div class="sec-title">Exportar página atual</div>
+    <button class="btn export" style="width:100%;margin-bottom:5px;justify-content:center" id="expPdfP">📄 PDF A4 Retrato</button>
+    <button class="btn export" style="width:100%;margin-bottom:5px;justify-content:center" id="expPdfL">📄 PDF A4 Paisagem</button>
+    <button class="btn export" style="width:100%;justify-content:center" id="expPng">🖼 PNG Alta Resolução</button>
+  </div>
+</div>
 
-        function toggleModalLead(show) { document.getElementById('modalLead').classList.toggle('hidden', !show); if(!show) document.getElementById('formLead').reset(); }
-        function salvarNovoLead(event) { event.preventDefault(); const lead = { id: Date.now(), nome: document.getElementById('l-nome').value, tel: document.getElementById('l-tel').value, email: document.getElementById('l-email').value, status: 'novo' }; leads.push(lead); atualizarLeads(); toggleModalLead(false); }
-        function moverStatus(id, novoStatus) { leads = leads.map(l => { if(l.id === id) l.status = novoStatus; return l; }); atualizarLeads(); }
-        function excluirLead(id) { leads = leads.filter(l => l.id !== id); atualizarLeads(); }
-        function atualizarLeads() { localStorage.setItem('cs_leads', JSON.stringify(leads)); renderKanban(); }
-        
-        function promoverACliente(id) {
-            const lead = leads.find(l => l.id === id);
-            if(lead) {
-                clientes.push({ id: Date.now(), nome: lead.nome, documento: 'Convertido do Funil', tipo: 'LEAD', tel: lead.tel, email: lead.email });
-                localStorage.setItem('cs_clientes', JSON.stringify(clientes));
-                leads = leads.filter(l => l.id !== id);
-                atualizarLeads(); renderClientes(); atualizarSelectsOrcamento();
-                alert(`${lead.nome} homologado como cliente com sucesso!`);
-            }
-        }
+</div>
+</div>
 
-        function renderKanban() {
-            const cols = { novo: '', contato: '', proposta: '', ganho: '' };
-            const counts = { novo: 0, contato: 0, proposta: 0, ganho: 0 };
-            leads.forEach(l => {
-                counts[l.status]++;
-                cols[l.status] += `<div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200"><h4 class="font-bold text-xs text-slate-800">${l.nome}</h4><p class="text-[10px] text-gray-500">✉️ ${l.email}</p><p class="text-[10px] text-gray-500 mb-3">📞 ${l.tel}</p><div class="flex flex-col gap-1.5 border-t pt-2"><select onchange="moverStatus(${l.id}, this.value)" class="text-xs border p-1 rounded bg-gray-50"><option value="novo" ${l.status==='novo'?'selected':''}>Mover: Novo</option><option value="contato" ${l.status==='contato'?'selected':''}>Mover: Contato</option><option value="proposta" ${l.status==='proposta'?'selected':''}>Mover: Proposta</option><option value="ganho" ${l.status==='ganho'?'selected':''}>Mover: Fechado</option></select>${l.status==='ganho'?`<button onclick="promoverACliente(${l.id})" class="bg-green-600 text-white font-bold py-1 rounded text-[10px]">Promover a Cliente</button>`:''}<button onclick="excluirLead(${l.id})" class="text-left text-[10px] text-red-400 hover:underline">Remover</button></div></div>`;
-            });
-            for(let k in cols) { document.getElementById(`col-${k}`).innerHTML = cols[k] || '<p class="text-xs text-gray-400 italic text-center py-4">Vazio</p>'; document.getElementById(`count-${k}`).innerText = counts[k]; }
-        }
+<script>
+const canvas = document.getElementById('mainCanvas');
+const ctx = canvas.getContext('2d');
+const canvasWrap = document.getElementById('canvasWrap');
 
-        function atualizarSelectsOrcamento() {
-            let clientOps = '<option value="">Escolha o cliente...</option>';
-            clientes.forEach((c, idx) => { clientOps += `<option value="${idx}">${c.nome}</option>`; });
-            document.getElementById('orc-cliente-select').innerHTML = clientOps;
+const MM = 2.835;
+const FORMATS = {
+  portrait:  { w: Math.round(210*MM), h: Math.round(297*MM) },
+  landscape: { w: Math.round(297*MM), h: Math.round(210*MM) }
+};
+let fmt = 'portrait';
+let pages = [];
+let currentPageIdx = 0;
+let selectedItemId = null;
+let dragging = false, dragOx=0, dragOy=0;
+let resizing = false, resizeHandle=-1, resizeOriginal={};
+let nextId = 1;
 
-            let prodOps = '<option value="">Adicionar item técnico...</option>';
-            estoque.forEach((p, idx) => { prodOps += `<option value="${idx}">${p.nome} - R$ ${p.preco.toFixed(2)}</option>`; });
-            document.getElementById('orc-produto-select').innerHTML = prodOps;
-        }
+const THEMES = [
+  { id:'baby',     name:'Bebê',        icon:'👶', colors:['#fff0f5','#ffd6e8','#ffb3d1','#c8eef5','#a8dde8'], accent:'#d4547e', textColor:'#6b2040', decorFn: drawBabyDecor },
+  { id:'grad',     name:'Formatura',   icon:'🎓', colors:['#1a1a2e','#16213e','#0f3460','#e94560','#f5d042'], accent:'#f5d042', textColor:'#f5d042', decorFn: drawGradDecor },
+  { id:'wedding',  name:'Casamento',   icon:'💍', colors:['#fefefe','#f9f0e8','#e8d5c4','#c8a882','#8b6b4a'], accent:'#c8a882', textColor:'#5a3e28', decorFn: drawWeddingDecor },
+  { id:'birthday', name:'Aniversário', icon:'🎂', colors:['#fff9e6','#ffe066','#ff9966','#ff6699','#cc33ff'], accent:'#ff6699', textColor:'#7a1040', decorFn: drawBdayDecor },
+  { id:'bodas',    name:'Bodas',       icon:'💛', colors:['#fffaed','#fff0a0','#ffd700','#b8860b','#6b4e0a'], accent:'#b8860b', textColor:'#4a3000', decorFn: drawBodasDecor },
+  { id:'nature',   name:'Natureza',    icon:'🌿', colors:['#f0f7ee','#d4edda','#a8d5b5','#5b9e72','#2d6a4f'], accent:'#5b9e72', textColor:'#1a4a30', decorFn: drawNatureDecor },
+  { id:'vintage',  name:'Vintage',     icon:'📷', colors:['#f5efe0','#e8d5b0','#c4a26e','#8b6914','#4a3000'], accent:'#8b6914', textColor:'#2a1800', decorFn: drawVintageDecor },
+  { id:'travel',   name:'Viagem',      icon:'✈️', colors:['#e8f4fd','#b3d9f5','#5ba3d9','#1a5f8a','#0a2e45'], accent:'#1a5f8a', textColor:'#0a2e45', decorFn: drawTravelDecor },
+  { id:'xmas',     name:'Natal',       icon:'🎄', colors:['#1a3a1a','#2d5a2d','#c41e3a','#f5f5f5','#ffd700'], accent:'#c41e3a', textColor:'#ffd700', decorFn: drawXmasDecor },
+  { id:'easter',   name:'Páscoa',      icon:'🐣', colors:['#fef9e7','#fde68a','#a7f3d0','#fbcfe8','#ddd6fe'], accent:'#f472b6', textColor:'#6b3074', decorFn: drawEasterDecor },
+  { id:'book_bw',  name:'Book P&B',    icon:'🖤', colors:['#0a0a0a','#1a1a1a','#2a2a2a','#888','#fff'], accent:'#fff', textColor:'#ffffff', decorFn: drawBookBWDecor },
+  { id:'book_color',name:'Book Color', icon:'🌈', colors:['#1a0a2e','#2d1b4e','#4a1570','#c026d3','#f0abfc'], accent:'#c026d3', textColor:'#f0abfc', decorFn: drawBookColorDecor },
+  { id:'book_gold', name:'Book Gold',  icon:'✨', colors:['#0a0806','#1a1208','#2a1e0a','#b8860b','#ffd700'], accent:'#ffd700', textColor:'#ffd700', decorFn: drawBookGoldDecor },
+  { id:'book_rose', name:'Book Rosê',  icon:'🌸', colors:['#1a0808','#2e1010','#4a1818','#c0392b','#f8c8c8'], accent:'#e8a0a0', textColor:'#f8c8c8', decorFn: drawBookRoseDecor },
+];
 
-        document.getElementById('orc-cliente-select').addEventListener('change', function() {
-            const c = clientes[this.value];
-            if(c) {
-                document.getElementById('print-cliente-nome').innerText = c.nome;
-                document.getElementById('print-cliente-tel').innerText = c.tel;
-                document.getElementById('print-cliente-email').innerText = c.email;
-            }
-        });
+const FRAME_TYPES = [
+  { id:'polaroid',       name:'Polaroid',     icon:'📷' },
+  { id:'polaroid_wide',  name:'Pol. Wide',    icon:'🖼' },
+  { id:'polaroid_tall',  name:'Pol. Alto',    icon:'📸' },
+  { id:'polaroid_mini',  name:'Pol. Mini',    icon:'🔲' },
+  { id:'polaroid_strip', name:'Pol. Strip',   icon:'🎞' },
+  { id:'polaroid_label', name:'Pol. Label',   icon:'🏷' },
+  { id:'round',          name:'Oval',         icon:'⭕' },
+  { id:'fancy',          name:'Elegante',     icon:'💎' },
+  { id:'filmstrip',      name:'Película',     icon:'📽' },
+  { id:'heart',          name:'Coração',      icon:'❤️' },
+  { id:'star',           name:'Estrela',      icon:'⭐' },
+  { id:'plain',          name:'Simples',      icon:'▭' },
+  { id:'ticket',         name:'Ticket',       icon:'🎫' },
+  { id:'leaf',           name:'Folha',        icon:'🍃' },
+  { id:'book_frame',     name:'Book/Moda',    icon:'👗' },
+  { id:'contact_sheet',  name:'Contato',      icon:'📋' },
+];
 
-        function adicionarProdutoAoOrcamento() {
-            const idx = document.getElementById('orc-produto-select').value;
-            if(idx !== "") {
-                itensOrcamentoCorrente.push(estoque[idx]);
-                renderItensImpressao();
-                document.getElementById('orc-produto-select').value = "";
-            }
-        }
+let currentTheme = THEMES[0];
+let bindSide = 'left';
+let bindWidth = 20;
+let bindColor = '#e8d5b0';
 
-        function renderItensImpressao() {
-            let html = '', total = 0;
-            itensOrcamentoCorrente.forEach(item => {
-                total += item.preco;
-                html += `<tr class="text-xs"><td class="p-2 text-slate-800 font-medium">${item.nome}</td><td class="p-2 text-right text-blue-950 font-bold">R$ ${item.preco.toFixed(2)}</td></tr>`;
-            });
-            document.getElementById('print-itens-corpo').innerHTML = html || '<tr><td colspan="2">Lista Vazia.</td></tr>';
-            document.getElementById('print-total-valor').innerText = `R$ ${total.toFixed(2)}`;
-        }
+function getCW(){ return FORMATS[fmt].w; }
+function getCH(){ return FORMATS[fmt].h; }
+function getPage(){ return pages[currentPageIdx]; }
+function getItems(){ return getPage().items; }
+function getTheme(id){ return THEMES.find(t=>t.id===id)||THEMES[0]; }
 
-        function enviarOrcamentoEmail() {
-            const c = clientes[document.getElementById('orc-cliente-select').value];
-            if(!c) return alert("Por favor, selecione um cliente primeiro para resgatar o e-mail.");
-            let corpo = `Olá, ${c.nome}.\n\nSegue a sua proposta técnica da Castseg Distribuidora Santos:\n\n`;
-            itensOrcamentoCorrente.forEach(i => corpo += `- ${i.nome}: R$ ${i.preco.toFixed(2)}\n`);
-            corpo += `\nTotal da Proposta: ${document.getElementById('print-total-valor').innerText}\n\nFicamos à disposição para fechar o pedido.\n\nAtenciosamente,\nEquipe Castseg Santos`;
-            window.location.href = `mailto:${c.email}?subject=Proposta%20Comercial%20-%20Castseg%20Santos&body=${encodeURIComponent(corpo)}`;
-        }
+const COVER_DEFAULTS = {
+  baby:       { title:'Nosso Bebê ♡',               subtitle:'Um novo amor chegou' },
+  grad:       { title:'Formatura',                   subtitle:'Conquistas & Sonhos 2024' },
+  wedding:    { title:'Nosso Casamento',             subtitle:'Para sempre juntos ♡' },
+  birthday:   { title:'Feliz Aniversário!',          subtitle:'Comemorando você' },
+  bodas:      { title:'Bodas de Ouro',               subtitle:'50 anos de amor e cumplicidade' },
+  nature:     { title:'Natureza Viva',               subtitle:'Memórias ao ar livre' },
+  vintage:    { title:'Memórias Vintage',            subtitle:'Histórias para sempre' },
+  travel:     { title:'Nossas Viagens',              subtitle:'Aventuras & Descobertas' },
+  xmas:       { title:'Feliz Natal',                 subtitle:'Momentos especiais em família' },
+  easter:     { title:'Feliz Páscoa!',               subtitle:'Alegria, amor e renovação' },
+  book_bw:    { title:'BOOK',                        subtitle:'MODEL PORTFOLIO' },
+  book_color: { title:'BOOK',                        subtitle:'FASHION  •  MODEL  •  PORTFOLIO' },
+  book_gold:  { title:'BOOK',                        subtitle:'MODEL  •  FASHION  •  PRESTIGE' },
+  book_rose:  { title:'BOOK',                        subtitle:'Fashion  •  Beauty  •  Lifestyle' },
+};
 
-        function mudarModulo(modulo) {
-            document.querySelectorAll('.modulo-content').forEach(el => el.classList.add('hidden'));
-            document.getElementById(`mod-${modulo}`).classList.remove('hidden');
-            
-            document.querySelectorAll('header nav button').forEach(btn => {
-                btn.className = "px-4 py-2 rounded-lg font-semibold text-xs transition flex items-center gap-2 text-slate-400 hover:text-white";
-            });
-            
-            const btnAtivo = document.getElementById(`btn-nav-${modulo}`);
-            if(btnAtivo) {
-                btnAtivo.className = "px-4 py-2 rounded-lg font-semibold text-xs transition flex items-center gap-2 bg-blue-900 text-white";
-            }
-            
-            const titulos = {
-                kanban: "Funil de Captação (Leads)",
-                clientes: "Cadastro e Consulta de Clientes (CPF/CNPJ)",
-                estoque: "Gerenciamento de Catálogo & Estoque Atacado",
-                orcamentos: "Impressão de Orçamentos e Disparos Comerciais",
-                agenda: "Google Calendar API Connection",
-                jucesp: "Radar JUCESP - Prospecção Ativa na Baixada"
-            };
-            document.getElementById('titulo-modulo').innerText = titulos[modulo];
-            
-            const containerBotoes = document.getElementById('botoes-acao');
-            if(modulo === 'kanban') {
-                containerBotoes.innerHTML = `<button onclick="toggleModalLead(true)" class="bg-blue-900 hover:bg-blue-800 text-white font-bold py-1.5 px-4 rounded shadow text-xs transition flex items-center gap-2"><i class="fa-solid fa-plus"></i> Novo Lead</button>`;
-            } else {
-                containerBotoes.innerHTML = `<span class="text-xs text-gray-400 font-medium italic">Castseg Workspace Ativo</span>`;
-            }
-        }
+// Biblioteca de adesivos
+const STICKERS={
+  hearts:['❤️','💕','💖','💗','💓','💝','💘','💞','💌','💟','❣️','🧡','💛','💚','💙','💜','🖤','🤍','🤎'],
+  stars:['⭐','🌟','✨','💫','⚡','🌠','🌈','☀️','🌙','⭐️','🌛','🌜','🌝','🌞','✴️','🔆','💥','🎆','🎇'],
+  nature:['🌸','🌺','🌻','🌷','🌹','🏵️','💐','🌼','🌿','☘️','🍀','🌱','🌴','🌳','🍃','🌾','🌲','🍂','🌵'],
+  emojis:['😊','😍','🥰','😘','😁','😆','🤗','🥳','😎','🤩','😇','🙂','😉','😋','😌','🤭','😂','🥺','😭'],
+  shapes:['⭕','🔴','🟠','🟡','🟢','🔵','🟣','⚫','⚪','🟤','🔶','🔷','🔸','🔹','💠','🔺','🔻','🔲','🔳'],
+  misc:['🎀','🎁','🎈','🎉','🎊','🎂','🍰','🧁','🎵','🎶','🎸','🎹','🦋','🐝','🐞','☁️','⛅','🌤','🌥']
+};
 
-        document.getElementById('orc-data-atual').innerText = new Date().toLocaleDateString('pt-BR');
-        window.onload = () => { 
-            renderKanban(); 
-            renderClientes(); 
-            renderEstoque(); 
-            atualizarSelectsOrcamento(); 
-            if (typeof google !== 'undefined') initGoogleAuth(); 
-        };
-    </script>
+function initPage(isCover=false){
+  const def = COVER_DEFAULTS[currentTheme.id] || { title:'Meu Álbum', subtitle:'Minhas memórias' };
+  return { theme: currentTheme.id, isCover, items: [],
+    coverTitle: def.title, coverSubtitle: def.subtitle,
+    coverTitleSize: 0, coverSubtitleSize: 0,
+    coverTitleColor: '', coverSubtitleColor: '',
+    coverFont: '' };
+}
+
+/* ===== THEME DRAW FUNCTIONS ===== */
+function drawBabyDecor(ctx,w,h,th,isCover,pg){
+  ctx.fillStyle=th.colors[0]; ctx.fillRect(0,0,w,h);
+  // soft circles
+  [.15,.45,.7,.25,.8,.55,.35,.9].forEach((v,i)=>{
+    ctx.fillStyle=th.colors[1+(i%2)];
+    ctx.globalAlpha=0.15;
+    ctx.beginPath();
+    ctx.arc(v*w,(i%3*.3+.2)*h,70+i*15,0,Math.PI*2);
+    ctx.fill();
+  });
+  ctx.globalAlpha=1;
+  // polka dots
+  for(let i=0;i<40;i++){
+    ctx.fillStyle=i%2===0?th.colors[2]:th.colors[3];
+    ctx.globalAlpha=0.12;
+    ctx.beginPath();
+    ctx.arc(Math.random()*w,Math.random()*h,5,0,Math.PI*2);
+    ctx.fill();
+  }
+  ctx.globalAlpha=1;
+  // small hearts scattered
+  ctx.fillStyle=th.accent; ctx.globalAlpha=0.2;
+  for(let i=0;i<8;i++){
+    const hx=Math.random()*w, hy=Math.random()*h;
+    drawHeartPath(ctx,hx-8,hy-8,16,16); ctx.fill();
+  }
+  ctx.globalAlpha=1;
+  if(isCover){
+    ctx.shadowColor='rgba(180,80,120,0.3)'; ctx.shadowBlur=12;
+    ctx.fillStyle=th.textColor; ctx.font=`bold 54px Georgia`; ctx.textAlign='center';
+    if(pg&&pg.coverFont){ctx.font=`bold ${pg.coverTitleSize||56}px ${pg.coverFont}`;}if(pg&&pg.coverTitleColor){ctx.fillStyle=pg.coverTitleColor;}ctx.fillText((pg&&pg.coverTitle)||'Nosso Bebê ♡',w/2,h*0.14);
+    ctx.shadowBlur=0;
+    ctx.font=`italic 28px Georgia`; ctx.fillStyle='#c8899e';
+    if(pg&&pg.coverFont){ctx.font=`${pg.coverTitleSize?Math.round(pg.coverTitleSize*.45):24}px ${pg.coverFont}`;}if(pg&&pg.coverSubtitleColor){ctx.fillStyle=pg.coverSubtitleColor;}ctx.fillText((pg&&pg.coverSubtitle)||'Um novo amor chegou',w/2,h*0.21);
+  }
+  ctx.textAlign='left';
+}
+
+function drawGradDecor(ctx,w,h,th,isCover,pg){
+  ctx.fillStyle=th.colors[0]; ctx.fillRect(0,0,w,h);
+  ctx.fillStyle=th.colors[1]; ctx.fillRect(0,h*.65,w,h*.35);
+  ctx.fillStyle=th.colors[2]; ctx.fillRect(0,h*.68,w,h*.04);
+  // diagonal lines
+  ctx.strokeStyle=th.colors[3]; ctx.lineWidth=1.5; ctx.globalAlpha=0.07;
+  for(let i=-h;i<w+h;i+=32){ ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i+h,h); ctx.stroke(); }
+  ctx.globalAlpha=1;
+  // stars
+  for(let i=0;i<40;i++){
+    ctx.fillStyle=th.colors[4]; ctx.globalAlpha=0.35;
+    const sx=Math.random()*w, sy=Math.random()*h*.6;
+    ctx.beginPath(); ctx.arc(sx,sy,Math.random()*2+0.5,0,Math.PI*2); ctx.fill();
+  }
+  ctx.globalAlpha=1;
+  if(isCover){
+    ctx.fillStyle=th.accent; ctx.font=`bold 62px Georgia`; ctx.textAlign='center';
+    ctx.shadowColor='rgba(0,0,0,0.5)'; ctx.shadowBlur=14;
+    ctx.fillText((pg&&pg.coverTitle)||'Formatura',w/2,h*0.15);
+    ctx.shadowBlur=0;
+    ctx.font=`28px Georgia`; ctx.fillStyle='#fff';
+    if(pg&&pg.coverFont){ctx.font=`${pg.coverTitleSize?Math.round(pg.coverTitleSize*.45):24}px ${pg.coverFont}`;}if(pg&&pg.coverSubtitleColor){ctx.fillStyle=pg.coverSubtitleColor;}ctx.fillText((pg&&pg.coverSubtitle)||'Conquistas & Sonhos 2024',w/2,h*0.22);
+  }
+  ctx.textAlign='left'; ctx.shadowBlur=0;
+}
+
+function drawWeddingDecor(ctx,w,h,th,isCover,pg){
+  ctx.fillStyle=th.colors[1]; ctx.fillRect(0,0,w,h);
+  // lace border
+  ctx.strokeStyle=th.colors[3]; ctx.lineWidth=1; ctx.globalAlpha=0.12;
+  for(let x=0;x<w;x+=20){ for(let y=0;y<h;y+=20){
+    ctx.beginPath(); ctx.arc(x,y,8,0,Math.PI*2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x-9,y); ctx.lineTo(x+9,y); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x,y-9); ctx.lineTo(x,y+9); ctx.stroke();
+  }}
+  ctx.globalAlpha=1;
+  ctx.fillStyle=th.colors[2]; ctx.fillRect(0,0,w,h*.10); ctx.fillRect(0,h*.90,w,h*.10);
+  ctx.strokeStyle=th.colors[3]; ctx.lineWidth=2; ctx.strokeRect(14,14,w-28,h-28);
+  ctx.strokeStyle=th.colors[2]; ctx.lineWidth=1; ctx.strokeRect(22,22,w-44,h-44);
+  if(isCover){
+    ctx.fillStyle=th.textColor; ctx.font=`italic bold 52px Georgia`; ctx.textAlign='center';
+    if(pg&&pg.coverFont){ctx.font=`bold ${pg.coverTitleSize||56}px ${pg.coverFont}`;}if(pg&&pg.coverTitleColor){ctx.fillStyle=pg.coverTitleColor;}ctx.fillText((pg&&pg.coverTitle)||'Nosso Casamento',w/2,h*0.16);
+    ctx.font=`italic 26px Georgia`; ctx.fillText((pg&&pg.coverSubtitle)||'Para sempre juntos ♡',w/2,h*0.22);
+  }
+  ctx.textAlign='left';
+}
+
+function drawBdayDecor(ctx,w,h,th,isCover,pg){
+  ctx.fillStyle=th.colors[0]; ctx.fillRect(0,0,w,h);
+  // confetti
+  const cfColors=[th.colors[1],th.colors[2],th.colors[3],th.colors[4],'#33aaff'];
+  for(let i=0;i<140;i++){
+    ctx.fillStyle=cfColors[i%cfColors.length]; ctx.globalAlpha=0.22;
+    ctx.save(); ctx.translate(Math.random()*w,Math.random()*h); ctx.rotate(Math.random()*Math.PI*2);
+    ctx.fillRect(-7,-3.5,14,7); ctx.restore();
+  }
+  ctx.globalAlpha=1;
+  // balloons
+  [[w*.15,h*.05],[w*.8,h*.08],[w*.5,h*.03],[w*.35,h*.06],[w*.65,h*.04]].forEach(([bx,by])=>{
+    ctx.fillStyle=['#ff6699','#ff9966','#ffdd00','#66ccff','#cc33ff'][Math.floor(Math.random()*5)];
+    ctx.globalAlpha=0.25;
+    ctx.beginPath(); ctx.ellipse(bx,by+20,16,20,0,0,Math.PI*2); ctx.fill();
+    ctx.globalAlpha=1;
+  });
+  if(isCover){
+    ctx.fillStyle=th.textColor; ctx.font=`bold 56px Georgia`; ctx.textAlign='center';
+    if(pg&&pg.coverFont){ctx.font=`bold ${pg.coverTitleSize||56}px ${pg.coverFont}`;}if(pg&&pg.coverTitleColor){ctx.fillStyle=pg.coverTitleColor;}ctx.fillText((pg&&pg.coverTitle)||'Feliz Aniversário!',w/2,h*.15);
+    ctx.font=`28px Georgia`; ctx.fillStyle='#d4547e';
+    if(pg&&pg.coverFont){ctx.font=`${pg.coverTitleSize?Math.round(pg.coverTitleSize*.45):24}px ${pg.coverFont}`;}if(pg&&pg.coverSubtitleColor){ctx.fillStyle=pg.coverSubtitleColor;}ctx.fillText((pg&&pg.coverSubtitle)||'🎉 Comemorando você 🎉',w/2,h*.22);
+  }
+  ctx.textAlign='left';
+}
+
+function drawBodasDecor(ctx,w,h,th,isCover,pg){
+  ctx.fillStyle=th.colors[0]; ctx.fillRect(0,0,w,h);
+  ctx.strokeStyle=th.colors[3]; ctx.lineWidth=3.5; ctx.strokeRect(16,16,w-32,h-32);
+  ctx.strokeStyle=th.colors[2]; ctx.lineWidth=1.5; ctx.strokeRect(26,26,w-52,h-52);
+  ctx.strokeStyle=th.colors[1]; ctx.lineWidth=0.8; ctx.strokeRect(34,34,w-68,h-68);
+  // floral corners
+  [[0,0],[w,0],[0,h],[w,h]].forEach(([cx,cy])=>{
+    ctx.fillStyle=th.colors[3]; ctx.globalAlpha=0.15;
+    for(let p=0;p<6;p++){
+      const a=p*Math.PI/3;
+      ctx.beginPath(); ctx.arc(cx+Math.cos(a)*22,cy+Math.sin(a)*22,22,0,Math.PI*2); ctx.fill();
+    }
+  });
+  ctx.globalAlpha=1;
+  // scattered stars
+  for(let i=0;i<20;i++){
+    ctx.fillStyle=th.colors[3]; ctx.globalAlpha=0.3;
+    drawStarPath(ctx,Math.random()*w,Math.random()*h,7,3,5); ctx.fill();
+  }
+  ctx.globalAlpha=1;
+  if(isCover){
+    ctx.fillStyle=th.textColor; ctx.font=`italic bold 50px Georgia`; ctx.textAlign='center';
+    if(pg&&pg.coverFont){ctx.font=`bold ${pg.coverTitleSize||56}px ${pg.coverFont}`;}if(pg&&pg.coverTitleColor){ctx.fillStyle=pg.coverTitleColor;}ctx.fillText((pg&&pg.coverTitle)||'Bodas de Ouro',w/2,h*.15);
+    ctx.font=`italic 26px Georgia`; ctx.fillText((pg&&pg.coverSubtitle)||'50 anos de amor e cumplicidade',w/2,h*.22);
+  }
+  ctx.textAlign='left';
+}
+
+function drawNatureDecor(ctx,w,h,th,isCover,pg){
+  ctx.fillStyle=th.colors[0]; ctx.fillRect(0,0,w,h);
+  ctx.fillStyle=th.colors[4]; ctx.fillRect(0,h*.82,w,h*.18);
+  ctx.fillStyle=th.colors[3]; ctx.globalAlpha=0.2;
+  ctx.fillRect(0,h*.78,w,h*.06); ctx.globalAlpha=1;
+  // leaves
+  const leafPositions=[[20,20,0.3],[w-30,25,0.3],[20,h-30,0.3],[w-20,h-30,0.3],[w/2,15,0.2],[w*.3,h*.5,0.1]];
+  leafPositions.forEach(([lx,ly,alpha])=>{
+    ctx.fillStyle=th.colors[2]; ctx.globalAlpha=alpha;
+    ctx.beginPath(); ctx.ellipse(lx,ly,28,14,Math.PI/4,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle=th.colors[3]; ctx.globalAlpha=alpha*.8;
+    ctx.beginPath(); ctx.ellipse(lx+12,ly+8,20,10,Math.PI/3,0,Math.PI*2); ctx.fill();
+  });
+  ctx.globalAlpha=1;
+  if(isCover){
+    ctx.fillStyle=th.textColor; ctx.font=`bold 52px Georgia`; ctx.textAlign='center';
+    if(pg&&pg.coverFont){ctx.font=`bold ${pg.coverTitleSize||56}px ${pg.coverFont}`;}if(pg&&pg.coverTitleColor){ctx.fillStyle=pg.coverTitleColor;}ctx.fillText((pg&&pg.coverTitle)||'Natureza Viva',w/2,h*.15);
+    ctx.font=`italic 24px Georgia`; ctx.fillText((pg&&pg.coverSubtitle)||'Memórias ao ar livre',w/2,h*.22);
+  }
+  ctx.textAlign='left';
+}
+
+function drawVintageDecor(ctx,w,h,th,isCover,pg){
+  ctx.fillStyle=th.colors[0]; ctx.fillRect(0,0,w,h);
+  ctx.fillStyle=th.colors[1]; ctx.globalAlpha=0.45;
+  for(let i=0;i<800;i++) ctx.fillRect(Math.random()*w,Math.random()*h,1,1);
+  ctx.globalAlpha=1;
+  ctx.strokeStyle=th.colors[3]; ctx.lineWidth=4.5; ctx.strokeRect(14,14,w-28,h-28);
+  ctx.strokeStyle=th.colors[2]; ctx.lineWidth=1.5; ctx.strokeRect(24,24,w-48,h-48);
+  ctx.strokeStyle=th.colors[1]; ctx.lineWidth=0.8; ctx.strokeRect(32,32,w-64,h-64);
+  if(isCover){
+    ctx.fillStyle=th.textColor; ctx.font=`italic bold 48px 'Courier New'`; ctx.textAlign='center';
+    if(pg&&pg.coverFont){ctx.font=`bold ${pg.coverTitleSize||56}px ${pg.coverFont}`;}if(pg&&pg.coverTitleColor){ctx.fillStyle=pg.coverTitleColor;}ctx.fillText((pg&&pg.coverTitle)||'Memórias Vintage',w/2,h*.15);
+    ctx.font=`italic 22px 'Courier New'`; ctx.fillText((pg&&pg.coverSubtitle)||'Histórias para sempre',w/2,h*.22);
+  }
+  ctx.textAlign='left';
+}
+
+function drawTravelDecor(ctx,w,h,th,isCover,pg){
+  ctx.fillStyle=th.colors[1]; ctx.fillRect(0,0,w,h*.4);
+  ctx.fillStyle=th.colors[0]; ctx.fillRect(0,h*.4,w,h*.45);
+  ctx.fillStyle=th.colors[4]; ctx.fillRect(0,h*.85,w,h*.15);
+  ctx.fillStyle=th.colors[2]; ctx.globalAlpha=0.22;
+  ctx.beginPath(); ctx.moveTo(0,h*.38);
+  ctx.bezierCurveTo(w*.3,h*.28,w*.7,h*.44,w,h*.37);
+  ctx.lineTo(w,h*.48); ctx.bezierCurveTo(w*.6,h*.52,w*.35,h*.40,0,h*.50);
+  ctx.closePath(); ctx.fill(); ctx.globalAlpha=1;
+  // clouds
+  [[w*.15,h*.08],[w*.6,h*.12],[w*.85,h*.06]].forEach(([cx,cy])=>{
+    ctx.fillStyle='#fff'; ctx.globalAlpha=0.25;
+    [0,14,-14].forEach(dx=>{ ctx.beginPath(); ctx.arc(cx+dx,cy,14,0,Math.PI*2); ctx.fill(); });
+  });
+  ctx.globalAlpha=1;
+  if(isCover){
+    ctx.fillStyle='#fff'; ctx.font=`bold 54px Georgia`; ctx.textAlign='center';
+    ctx.shadowColor='rgba(0,0,0,.35)'; ctx.shadowBlur=10;
+    ctx.fillText((pg&&pg.coverTitle)||'Nossas Viagens',w/2,h*.17);
+    ctx.shadowBlur=0; ctx.font=`26px Georgia`; ctx.fillStyle=th.accent;
+    if(pg&&pg.coverFont){ctx.font=`${pg.coverTitleSize?Math.round(pg.coverTitleSize*.45):24}px ${pg.coverFont}`;}if(pg&&pg.coverSubtitleColor){ctx.fillStyle=pg.coverSubtitleColor;}ctx.fillText((pg&&pg.coverSubtitle)||'Aventuras & Descobertas',w/2,h*.24);
+  }
+  ctx.textAlign='left'; ctx.shadowBlur=0;
+}
+
+function drawXmasDecor(ctx,w,h,th,isCover,pg){
+  ctx.fillStyle=th.colors[0]; ctx.fillRect(0,0,w,h);
+  ctx.fillStyle=th.colors[2]; ctx.fillRect(0,0,w,h*.08); ctx.fillRect(0,h*.92,w,h*.08);
+  // snow dots
+  for(let i=0;i<60;i++){
+    ctx.fillStyle='#fff'; ctx.globalAlpha=0.4+Math.random()*.3;
+    ctx.beginPath(); ctx.arc(Math.random()*w,Math.random()*h*.3,Math.random()*3+1,0,Math.PI*2); ctx.fill();
+  }
+  ctx.globalAlpha=1;
+  // small stars
+  for(let i=0;i<14;i++){
+    ctx.fillStyle=th.colors[4]; ctx.globalAlpha=0.5;
+    drawStarPath(ctx,Math.random()*w,Math.random()*h*.5,9,4,5); ctx.fill();
+  }
+  ctx.globalAlpha=1;
+  if(isCover){
+    ctx.fillStyle=th.textColor; ctx.font=`bold 56px Georgia`; ctx.textAlign='center';
+    if(pg&&pg.coverFont){ctx.font=`bold ${pg.coverTitleSize||56}px ${pg.coverFont}`;}if(pg&&pg.coverTitleColor){ctx.fillStyle=pg.coverTitleColor;}ctx.fillText((pg&&pg.coverTitle)||'Feliz Natal',w/2,h*.15);
+    ctx.font=`26px Georgia`; ctx.fillStyle='#fff';
+    if(pg&&pg.coverFont){ctx.font=`${pg.coverTitleSize?Math.round(pg.coverTitleSize*.45):24}px ${pg.coverFont}`;}if(pg&&pg.coverSubtitleColor){ctx.fillStyle=pg.coverSubtitleColor;}ctx.fillText((pg&&pg.coverSubtitle)||'Momentos especiais em família',w/2,h*.22);
+  }
+  ctx.textAlign='left';
+}
+
+function drawEasterDecor(ctx,w,h,th,isCover,pg){
+  ctx.fillStyle=th.colors[0]; ctx.fillRect(0,0,w,h);
+  const eggColors=[th.colors[1],th.colors[2],th.colors[3],th.colors[4]];
+  for(let i=0;i<12;i++){
+    ctx.fillStyle=eggColors[i%eggColors.length]; ctx.globalAlpha=0.18;
+    const ex=Math.random()*w, ey=Math.random()*h;
+    ctx.beginPath(); ctx.ellipse(ex,ey,14,20,Math.PI/6,0,Math.PI*2); ctx.fill();
+  }
+  ctx.globalAlpha=1;
+  if(isCover){
+    ctx.fillStyle=th.textColor; ctx.font=`bold 54px Georgia`; ctx.textAlign='center';
+    if(pg&&pg.coverFont){ctx.font=`bold ${pg.coverTitleSize||56}px ${pg.coverFont}`;}if(pg&&pg.coverTitleColor){ctx.fillStyle=pg.coverTitleColor;}ctx.fillText((pg&&pg.coverTitle)||'Feliz Páscoa!',w/2,h*.15);
+    ctx.font=`italic 26px Georgia`; ctx.fillStyle='#c026d3';
+    if(pg&&pg.coverFont){ctx.font=`${pg.coverTitleSize?Math.round(pg.coverTitleSize*.45):24}px ${pg.coverFont}`;}if(pg&&pg.coverSubtitleColor){ctx.fillStyle=pg.coverSubtitleColor;}ctx.fillText((pg&&pg.coverSubtitle)||'Alegria, amor e renovação',w/2,h*.22);
+  }
+  ctx.textAlign='left';
+}
+
+/* ===== BOOK / AGENCY THEMES ===== */
+function drawBookBWDecor(ctx,w,h,th,isCover,pg){
+  ctx.fillStyle='#0d0d0d'; ctx.fillRect(0,0,w,h);
+  ctx.strokeStyle='rgba(255,255,255,0.04)'; ctx.lineWidth=1;
+  for(let x=0;x<w;x+=40){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke(); }
+  for(let y2=0;y2<h;y2+=40){ ctx.beginPath(); ctx.moveTo(0,y2); ctx.lineTo(w,y2); ctx.stroke(); }
+  ctx.fillStyle='#fff'; ctx.fillRect(0,0,w,4); ctx.fillRect(0,h-4,w,4);
+  ctx.fillStyle='rgba(255,255,255,0.12)';
+  for(let y2=60;y2<h-60;y2+=80){ ctx.fillRect(0,y2,8,24); ctx.fillRect(w-8,y2,8,24); }
+  ctx.strokeStyle='rgba(255,255,255,0.06)'; ctx.lineWidth=80;
+  ctx.beginPath(); ctx.moveTo(w,0); ctx.lineTo(w+1,h*.4); ctx.stroke(); ctx.lineWidth=1;
+  if(isCover){
+    ctx.fillStyle='#fff'; ctx.font=`300 72px Arial`; ctx.textAlign='center';
+    if(pg&&pg.coverFont){ctx.font=`bold ${pg.coverTitleSize||56}px ${pg.coverFont}`;}if(pg&&pg.coverTitleColor){ctx.fillStyle=pg.coverTitleColor;}ctx.fillText((pg&&pg.coverTitle)||'BOOK',w/2,h*.18);
+    ctx.font=`100 22px Arial`; ctx.fillStyle='rgba(255,255,255,0.6)';
+    if(pg&&pg.coverFont){ctx.font=`${pg.coverTitleSize?Math.round(pg.coverTitleSize*.45):24}px ${pg.coverFont}`;}if(pg&&pg.coverSubtitleColor){ctx.fillStyle=pg.coverSubtitleColor;}ctx.fillText((pg&&pg.coverSubtitle)||'MODEL PORTFOLIO',w/2,h*.25);
+    ctx.strokeStyle='rgba(255,255,255,0.35)'; ctx.lineWidth=0.5;
+    ctx.beginPath(); ctx.moveTo(w*.25,h*.28); ctx.lineTo(w*.75,h*.28); ctx.stroke();
+  }
+  ctx.textAlign='left';
+}
+function drawBookColorDecor(ctx,w,h,th,isCover,pg){
+  ctx.fillStyle=th.colors[0]; ctx.fillRect(0,0,w,h);
+  ctx.fillStyle=th.colors[1]; ctx.globalAlpha=0.9; ctx.fillRect(0,0,w,h*.5); ctx.globalAlpha=1;
+  ctx.fillStyle=th.colors[2]; ctx.globalAlpha=0.5;
+  ctx.beginPath(); ctx.moveTo(w*.6,0); ctx.lineTo(w,0); ctx.lineTo(w,h*.7); ctx.closePath(); ctx.fill();
+  ctx.globalAlpha=1;
+  for(let i=0;i<18;i++){
+    ctx.fillStyle=th.colors[3]; ctx.globalAlpha=0.22;
+    ctx.beginPath(); ctx.arc(Math.random()*w,Math.random()*h,Math.random()*12+3,0,Math.PI*2); ctx.fill();
+  }
+  ctx.globalAlpha=1;
+  ctx.fillStyle=th.accent; ctx.fillRect(0,0,6,h); ctx.fillRect(w-6,0,6,h); ctx.fillRect(0,h-6,w,6);
+  if(isCover){
+    ctx.fillStyle=th.textColor; ctx.font=`bold 68px Arial`; ctx.textAlign='center';
+    ctx.shadowColor=th.accent; ctx.shadowBlur=20;
+    ctx.fillText((pg&&pg.coverTitle)||'BOOK',w/2,h*.18);
+    ctx.shadowBlur=0; ctx.font=`18px Arial`; ctx.fillStyle=th.textColor;
+    if(pg&&pg.coverFont){ctx.font=`${pg.coverTitleSize?Math.round(pg.coverTitleSize*.45):24}px ${pg.coverFont}`;}if(pg&&pg.coverSubtitleColor){ctx.fillStyle=pg.coverSubtitleColor;}ctx.fillText((pg&&pg.coverSubtitle)||'FASHION  \u2022  MODEL  \u2022  PORTFOLIO',w/2,h*.25);
+  }
+  ctx.textAlign='left'; ctx.shadowBlur=0;
+}
+function drawBookGoldDecor(ctx,w,h,th,isCover,pg){
+  ctx.fillStyle=th.colors[0]; ctx.fillRect(0,0,w,h);
+  ctx.strokeStyle='rgba(184,134,11,0.08)'; ctx.lineWidth=1;
+  for(let i=0;i<h;i+=8){ ctx.beginPath(); ctx.moveTo(0,i); ctx.lineTo(w,i); ctx.stroke(); }
+  ctx.strokeStyle=th.colors[3]; ctx.lineWidth=2; ctx.strokeRect(12,12,w-24,h-24);
+  ctx.lineWidth=0.5; ctx.strokeStyle='rgba(184,134,11,0.4)';
+  ctx.strokeRect(20,20,w-40,h-40); ctx.strokeRect(24,24,w-48,h-48);
+  [[28,28],[w-28,28],[28,h-28],[w-28,h-28]].forEach(([cx,cy])=>{
+    ctx.strokeStyle=th.colors[3]; ctx.lineWidth=1.5; ctx.globalAlpha=0.6;
+    ctx.beginPath(); ctx.arc(cx,cy,8,0,Math.PI*2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx-14,cy); ctx.lineTo(cx+14,cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx,cy-14); ctx.lineTo(cx,cy+14); ctx.stroke();
+  });
+  ctx.globalAlpha=1;
+  for(let i=0;i<30;i++){
+    ctx.fillStyle=th.colors[4]; ctx.globalAlpha=0.15+Math.random()*.2;
+    ctx.beginPath(); ctx.arc(Math.random()*w,Math.random()*h,1.5,0,Math.PI*2); ctx.fill();
+  }
+  ctx.globalAlpha=1;
+  if(isCover){
+    ctx.fillStyle=th.textColor; ctx.font=`italic bold 58px Georgia`; ctx.textAlign='center';
+    ctx.shadowColor='rgba(184,134,11,0.5)'; ctx.shadowBlur=16;
+    ctx.fillText((pg&&pg.coverTitle)||'BOOK',w/2,h*.17);
+    ctx.shadowBlur=0; ctx.font=`italic 20px Georgia`; ctx.fillStyle=th.colors[3];
+    if(pg&&pg.coverFont){ctx.font=`${pg.coverTitleSize?Math.round(pg.coverTitleSize*.45):24}px ${pg.coverFont}`;}if(pg&&pg.coverSubtitleColor){ctx.fillStyle=pg.coverSubtitleColor;}ctx.fillText((pg&&pg.coverSubtitle)||'MODEL  \u2022  FASHION  \u2022  PRESTIGE',w/2,h*.24);
+    ctx.strokeStyle=th.colors[3]; ctx.lineWidth=1; ctx.globalAlpha=0.5;
+    ctx.beginPath(); ctx.moveTo(w*.2,h*.28); ctx.lineTo(w*.8,h*.28); ctx.stroke();
+    ctx.globalAlpha=1;
+  }
+  ctx.textAlign='left'; ctx.shadowBlur=0;
+}
+function drawBookRoseDecor(ctx,w,h,th,isCover,pg){
+  ctx.fillStyle=th.colors[0]; ctx.fillRect(0,0,w,h);
+  ctx.fillStyle=th.colors[2]; ctx.globalAlpha=0.06;
+  for(let x=0;x<w;x+=12){ for(let y2=0;y2<h;y2+=12){
+    ctx.beginPath(); ctx.arc(x,y2,3,0,Math.PI*2); ctx.fill();
+  }}
+  ctx.globalAlpha=1;
+  ctx.fillStyle=th.colors[2]; ctx.globalAlpha=0.4;
+  ctx.fillRect(0,0,w*.08,h); ctx.fillRect(w*.92,0,w*.08,h);
+  ctx.globalAlpha=1;
+  ctx.fillStyle=th.accent; ctx.fillRect(0,h*.92,w,h*.08); ctx.fillRect(0,0,w,h*.02);
+  for(let i=0;i<10;i++){
+    const bx=Math.random()*w, by=Math.random()*h;
+    ctx.fillStyle=th.colors[3]; ctx.globalAlpha=0.1;
+    for(let p=0;p<5;p++){
+      const a=p*Math.PI*2/5;
+      ctx.beginPath(); ctx.ellipse(bx+Math.cos(a)*10,by+Math.sin(a)*10,7,4,a,0,Math.PI*2); ctx.fill();
+    }
+  }
+  ctx.globalAlpha=1;
+  if(isCover){
+    ctx.fillStyle=th.textColor; ctx.font=`bold 66px Georgia`; ctx.textAlign='center';
+    if(pg&&pg.coverFont){ctx.font=`bold ${pg.coverTitleSize||56}px ${pg.coverFont}`;}if(pg&&pg.coverTitleColor){ctx.fillStyle=pg.coverTitleColor;}ctx.fillText((pg&&pg.coverTitle)||'BOOK',w/2,h*.17);
+    ctx.font=`italic 20px Georgia`; ctx.fillStyle=th.accent;
+    if(pg&&pg.coverFont){ctx.font=`${pg.coverTitleSize?Math.round(pg.coverTitleSize*.45):24}px ${pg.coverFont}`;}if(pg&&pg.coverSubtitleColor){ctx.fillStyle=pg.coverSubtitleColor;}ctx.fillText((pg&&pg.coverSubtitle)||'Fashion  \u2022  Beauty  \u2022  Lifestyle',w/2,h*.24);
+  }
+  ctx.textAlign='left';
+}
+
+
+/* ===== COVER TITLE HELPER ===== */
+function drawCoverTitles(ctx,w,h,th,pg,yTitle,ySub,titleFont,subFont,titleColor,subColor){
+  if(!pg) return;
+  const font = pg.coverFont||'';
+  const tFont = font ? `bold ${pg.coverTitleSize||56}px ${font}` : titleFont;
+  const sFont = font ? `${pg.coverSubtitleSize||24}px ${font}` : subFont;
+  const tColor = pg.coverTitleColor || titleColor;
+  const sColor = pg.coverSubtitleColor || subColor;
+  if(pg.coverTitle){
+    ctx.fillStyle=tColor; ctx.font=tFont; ctx.textAlign='center'; ctx.textBaseline='alphabetic';
+    ctx.fillText(pg.coverTitle,w/2,yTitle);
+  }
+  if(pg.coverSubtitle){
+    ctx.fillStyle=sColor; ctx.font=sFont; ctx.textAlign='center'; ctx.textBaseline='alphabetic';
+    ctx.fillText(pg.coverSubtitle,w/2,ySub);
+  }
+  ctx.textAlign='left';
+}
+/* ===== SHAPE HELPERS ===== */
+function drawHeartPath(ctx,x,y,w,h){
+  ctx.beginPath();
+  ctx.moveTo(x+w/2,y+h*.25);
+  ctx.bezierCurveTo(x+w/2,y,x,y,x,y+h*.35);
+  ctx.bezierCurveTo(x,y+h*.65,x+w/2,y+h*.85,x+w/2,y+h);
+  ctx.bezierCurveTo(x+w/2,y+h*.85,x+w,y+h*.65,x+w,y+h*.35);
+  ctx.bezierCurveTo(x+w,y,x+w/2,y,x+w/2,y+h*.25);
+}
+function drawStarPath(ctx,cx,cy,outer,inner,pts){
+  ctx.beginPath();
+  for(let i=0;i<pts*2;i++){
+    const r=i%2===0?outer:inner;
+    const a=i*Math.PI/pts-Math.PI/2;
+    i===0?ctx.moveTo(cx+r*Math.cos(a),cy+r*Math.sin(a)):ctx.lineTo(cx+r*Math.cos(a),cy+r*Math.sin(a));
+  }
+  ctx.closePath();
+}
+
+/* ===== BINDING BORDER ===== */
+function drawBindingBorder(){
+  if(bindSide==='none') return;
+  const w=getCW(), h=getCH();
+  const bpx=Math.round(bindWidth*MM);
+  ctx.fillStyle=bindColor;
+  if(bindSide==='left'){
+    ctx.fillRect(0,0,bpx,h);
+    ctx.strokeStyle='rgba(0,0,0,0.18)'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(bpx,0); ctx.lineTo(bpx,h); ctx.stroke();
+    ctx.strokeStyle='rgba(0,0,0,0.07)'; ctx.lineWidth=0.8;
+    for(let y=18;y<h;y+=36){ ctx.beginPath(); ctx.moveTo(5,y); ctx.lineTo(bpx-5,y); ctx.stroke(); }
+  } else {
+    ctx.fillRect(w-bpx,0,bpx,h);
+    ctx.strokeStyle='rgba(0,0,0,0.18)'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(w-bpx,0); ctx.lineTo(w-bpx,h); ctx.stroke();
+  }
+}
+
+/* ===== FILTER ===== */
+function applyFilter(imgData, filter){
+  if(!filter||filter==='none') return imgData;
+  const d=imgData.data;
+  for(let i=0;i<d.length;i+=4){
+    let r=d[i],g=d[i+1],b=d[i+2];
+    if(filter==='grayscale'){ const v=.299*r+.587*g+.114*b; d[i]=d[i+1]=d[i+2]=v; }
+    else if(filter==='sepia'){ d[i]=Math.min(255,r*.393+g*.769+b*.189); d[i+1]=Math.min(255,r*.349+g*.686+b*.168); d[i+2]=Math.min(255,r*.272+g*.534+b*.131); }
+    else if(filter==='vintage'){ d[i]=Math.min(255,r*.88+28); d[i+1]=Math.min(255,g*.82+16); d[i+2]=Math.min(255,b*.68); }
+    else if(filter==='warm'){ d[i]=Math.min(255,r+22); d[i+2]=Math.max(0,b-18); }
+    else if(filter==='cold'){ d[i]=Math.max(0,r-18); d[i+2]=Math.min(255,b+22); }
+  }
+  return imgData;
+}
+
+function drawPhotoWithFilter(img, x, y, w, h, filter){
+  if(!filter||filter==='none'){ ctx.drawImage(img,x,y,w,h); return; }
+  const off=document.createElement('canvas');
+  off.width=w; off.height=h;
+  const oc=off.getContext('2d');
+  oc.drawImage(img,0,0,w,h);
+  let id=oc.getImageData(0,0,w,h);
+  id=applyFilter(id,filter);
+  oc.putImageData(id,0,0);
+  ctx.drawImage(off,x,y);
+}
+
+/* ===== FRAME DRAW ===== */
+function drawFrameItem(item){
+  const th=getTheme(getPage().theme);
+  ctx.save();
+  const cx=item.x+item.w/2, cy=item.y+item.h/2;
+  ctx.translate(cx,cy); ctx.rotate(item.rotation*Math.PI/180); ctx.translate(-cx,-cy);
+  const x=item.x,y=item.y,w=item.w,h=item.h;
+  const pad=item.padding||10;
+  const bord=item.borderBottom||40;
+
+  ctx.shadowColor='rgba(0,0,0,0.22)'; ctx.shadowBlur=item.shadow||8;
+  ctx.shadowOffsetX=2; ctx.shadowOffsetY=3;
+
+  const hasPhoto = !!item.photo;
+  const emptyFill = ()=>{
+    ctx.shadowBlur=0; ctx.shadowOffsetX=0; ctx.shadowOffsetY=0;
+  };
+
+  const isPolaroidType = ['polaroid','polaroid_wide','polaroid_tall','polaroid_mini','polaroid_strip','polaroid_label','plain'].includes(item.frameType);
+  if(isPolaroidType){
+    // Determine padding and border based on variant
+    let topPad=pad, sidePad=pad, bBot=bord;
+    let frameColor='#ffffff', showLabel=true, labelStyle='georgia';
+    if(item.frameType==='polaroid_wide'){  topPad=8; sidePad=8; bBot=36; }
+    if(item.frameType==='polaroid_tall'){  topPad=10; sidePad=8; bBot=55; }
+    if(item.frameType==='polaroid_mini'){  topPad=6; sidePad=6; bBot=28; }
+    if(item.frameType==='polaroid_strip'){ topPad=4; sidePad=4; bBot=18; showLabel=false; }
+    if(item.frameType==='polaroid_label'){ topPad=8; sidePad=10; bBot=52; }
+    if(item.frameType==='plain'){ topPad=8; sidePad=8; bBot=36; }
+
+    ctx.fillStyle=frameColor;
+    ctx.beginPath(); ctx.roundRect(x,y,w,h,2); ctx.fill();
+    // subtle paper texture on polaroid body
+    ctx.fillStyle='rgba(0,0,0,0.012)';
+    for(let ti=0;ti<4;ti++) ctx.fillRect(x+Math.random()*w,y+Math.random()*h,w,1);
+    emptyFill();
+
+    const imgX=x+sidePad, imgY=y+topPad, imgW=w-sidePad*2, imgH=h-topPad-bBot;
+    if(hasPhoto){
+      ctx.save(); ctx.beginPath(); ctx.rect(imgX,imgY,imgW,imgH); ctx.clip();
+      drawPhotoWithFilter(item.photo,imgX,imgY,imgW,imgH,item.filter); ctx.restore();
+    } else {
+      ctx.fillStyle='#ede9e3'; ctx.fillRect(imgX,imgY,imgW,imgH);
+      ctx.fillStyle='#c0bbb4'; ctx.font=`${Math.min(imgW,imgH)*.1}px Arial`;
+      ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('FOTO',imgX+imgW/2,imgY+imgH/2);
+    }
+
+    // Bottom label area styling per variant
+    if(item.frameType==='polaroid_label' && bBot>40){
+      // ruled lines on label area
+      ctx.strokeStyle='rgba(0,0,0,0.08)'; ctx.lineWidth=0.5;
+      for(let li=1;li<3;li++){
+        const ly2=y+h-bBot+li*(bBot/3);
+        ctx.beginPath(); ctx.moveTo(x+10,ly2); ctx.lineTo(x+w-10,ly2); ctx.stroke();
+      }
+    }
+    if(item.frameType==='polaroid_strip'){
+      // sprocket holes top & bottom
+      ctx.fillStyle='rgba(0,0,0,0.12)';
+      for(let hi=x+8;hi<x+w-4;hi+=18){
+        ctx.beginPath(); ctx.arc(hi,y+6,3,0,Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(hi,y+h-6,3,0,Math.PI*2); ctx.fill();
+      }
+    }
+
+    if(item.frameType==='plain'){
+      ctx.strokeStyle=th.accent||'#888'; ctx.lineWidth=1.5;
+      ctx.beginPath(); ctx.roundRect(x,y,w,h,2); ctx.stroke();
+    }
+
+    // legend text
+    if(showLabel && item.legend){
+      ctx.fillStyle=item.textColor||'#444';
+      ctx.font=`${item.fontSize||13}px ${item.font||'Georgia'}`;
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(item.legend,x+w/2,y+h-bBot/2+2);
+    }
+  }
+  else if(item.frameType==='round'){
+    ctx.save();
+    ctx.beginPath(); ctx.ellipse(x+w/2,y+h/2,w/2,h/2,0,0,Math.PI*2);
+    ctx.fillStyle=th.colors[2]||'#ccc'; ctx.fill();
+    emptyFill();
+    if(hasPhoto){
+      ctx.save(); ctx.beginPath(); ctx.ellipse(x+w/2,y+h/2,w/2-6,h/2-6,0,0,Math.PI*2); ctx.clip();
+      drawPhotoWithFilter(item.photo,x+6,y+6,w-12,h-12,item.filter); ctx.restore();
+    } else {
+      ctx.fillStyle='#e8e4de'; ctx.beginPath(); ctx.ellipse(x+w/2,y+h/2,w/2-6,h/2-6,0,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#aaa'; ctx.font=`${Math.min(w,h)*.1}px Arial`; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText('FOTO',x+w/2,y+h/2);
+    }
+    ctx.strokeStyle=th.accent||'#888'; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.ellipse(x+w/2,y+h/2,w/2,h/2,0,0,Math.PI*2); ctx.stroke();
+    ctx.restore();
+  }
+  else if(item.frameType==='fancy'){
+    ctx.fillStyle='#fff'; ctx.strokeStyle=th.accent||'#b8860b'; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.roundRect(x,y,w,h,8); ctx.fill(); ctx.stroke();
+    ctx.strokeStyle=th.accent||'#b8860b'; ctx.lineWidth=1.2;
+    ctx.beginPath(); ctx.roundRect(x+6,y+6,w-12,h-12,5); ctx.stroke();
+    emptyFill();
+    if(hasPhoto){
+      ctx.save(); ctx.beginPath(); ctx.roundRect(x+10,y+10,w-20,h-20-bord,4); ctx.clip();
+      drawPhotoWithFilter(item.photo,x+10,y+10,w-20,h-20-bord,item.filter); ctx.restore();
+    } else {
+      ctx.fillStyle='#f5f0e8'; ctx.beginPath(); ctx.roundRect(x+10,y+10,w-20,h-20-bord,4); ctx.fill();
+      ctx.fillStyle='#bbb'; ctx.font=`${Math.min(w,h)*.09}px Arial`; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText('FOTO',x+w/2,y+10+(h-20-bord)/2);
+    }
+  }
+  else if(item.frameType==='filmstrip'){
+    ctx.fillStyle='#111'; ctx.beginPath(); ctx.roundRect(x,y,w,h,2); ctx.fill();
+    emptyFill();
+    const holes=16;
+    for(let hx=x+6;hx<x+w-10;hx+=18){
+      ctx.fillStyle='#333';
+      ctx.beginPath(); ctx.roundRect(hx,y+3,10,holes-4,2); ctx.fill();
+      ctx.beginPath(); ctx.roundRect(hx,y+h-holes+1,10,holes-4,2); ctx.fill();
+    }
+    if(hasPhoto){
+      ctx.save(); ctx.beginPath(); ctx.rect(x+4,y+holes,w-8,h-holes*2); ctx.clip();
+      drawPhotoWithFilter(item.photo,x+4,y+holes,w-8,h-holes*2,item.filter); ctx.restore();
+    } else {
+      ctx.fillStyle='#222'; ctx.fillRect(x+4,y+holes,w-8,h-holes*2);
+      ctx.fillStyle='#555'; ctx.font=`${Math.min(w,h)*.09}px Arial`; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText('FOTO',x+w/2,y+h/2);
+    }
+  }
+  else if(item.frameType==='heart'){
+    emptyFill();
+    drawHeartPath(ctx,x,y,w,h);
+    ctx.fillStyle=th.colors[2]||'#ffb3d1'; ctx.fill();
+    if(hasPhoto){
+      ctx.save(); drawHeartPath(ctx,x+7,y+7,w-14,h-14); ctx.clip();
+      drawPhotoWithFilter(item.photo,x+7,y+7,w-14,h-14,item.filter); ctx.restore();
+    }
+    ctx.strokeStyle=th.accent||'#d4547e'; ctx.lineWidth=2.5;
+    drawHeartPath(ctx,x,y,w,h); ctx.stroke();
+  }
+  else if(item.frameType==='star'){
+    emptyFill();
+    drawStarPath(ctx,x+w/2,y+h/2,Math.min(w,h)/2,Math.min(w,h)/4,5);
+    ctx.fillStyle=th.colors[2]||'#ffe066'; ctx.fill();
+    if(hasPhoto){
+      ctx.save(); drawStarPath(ctx,x+w/2,y+h/2,Math.min(w,h)/2-6,Math.min(w,h)/4-3,5); ctx.clip();
+      drawPhotoWithFilter(item.photo,x,y,w,h,item.filter); ctx.restore();
+    }
+    ctx.strokeStyle=th.accent||'#b8860b'; ctx.lineWidth=2.5;
+    drawStarPath(ctx,x+w/2,y+h/2,Math.min(w,h)/2,Math.min(w,h)/4,5); ctx.stroke();
+  }
+  else if(item.frameType==='ticket'){
+    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.roundRect(x,y,w,h,4); ctx.fill();
+    emptyFill();
+    ctx.strokeStyle=th.accent||'#888'; ctx.lineWidth=2;
+    ctx.setLineDash([6,4]);
+    ctx.beginPath(); ctx.moveTo(x,y+h-bord-8); ctx.lineTo(x+w,y+h-bord-8); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.beginPath(); ctx.roundRect(x,y,w,h,4); ctx.stroke();
+    if(hasPhoto){
+      ctx.save(); ctx.beginPath(); ctx.rect(x+6,y+6,w-12,h-bord-18); ctx.clip();
+      drawPhotoWithFilter(item.photo,x+6,y+6,w-12,h-bord-18,item.filter); ctx.restore();
+    } else {
+      ctx.fillStyle='#f5f0e8'; ctx.fillRect(x+6,y+6,w-12,h-bord-18);
+      ctx.fillStyle='#bbb'; ctx.font=`${Math.min(w,h)*.09}px Arial`; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText('FOTO',x+w/2,y+6+(h-bord-18)/2);
+    }
+  }
+  else if(item.frameType==='leaf'){
+    emptyFill();
+    ctx.fillStyle=th.colors[2]||'#a8d5b5';
+    ctx.beginPath(); ctx.moveTo(x+w/2,y); ctx.bezierCurveTo(x+w,y,x+w,y+h,x+w/2,y+h); ctx.bezierCurveTo(x,y+h,x,y,x+w/2,y); ctx.closePath(); ctx.fill();
+    if(hasPhoto){
+      ctx.save();
+      ctx.beginPath(); ctx.moveTo(x+w/2,y+7); ctx.bezierCurveTo(x+w-7,y+7,x+w-7,y+h-7,x+w/2,y+h-7); ctx.bezierCurveTo(x+7,y+h-7,x+7,y+7,x+w/2,y+7); ctx.closePath(); ctx.clip();
+      drawPhotoWithFilter(item.photo,x+7,y+7,w-14,h-14,item.filter); ctx.restore();
+    }
+    ctx.strokeStyle=th.accent||'#5b9e72'; ctx.lineWidth=2.5;
+    ctx.beginPath(); ctx.moveTo(x+w/2,y); ctx.bezierCurveTo(x+w,y,x+w,y+h,x+w/2,y+h); ctx.bezierCurveTo(x,y+h,x,y,x+w/2,y); ctx.closePath(); ctx.stroke();
+  }
+  else if(item.frameType==='book_frame'){
+    // High-fashion minimal book frame
+    emptyFill();
+    const isBookTheme = getPage().theme.startsWith('book');
+    const fgColor = isBookTheme ? '#fff' : '#111';
+    const bgEmpty = isBookTheme ? '#1a1a1a' : '#f0ede8';
+    ctx.fillStyle='#000'; ctx.fillRect(x,y,w,h);
+    // thick top label bar
+    ctx.fillStyle=th.accent||'#b8860b'; ctx.fillRect(x,y,w,20);
+    // photo area
+    if(hasPhoto){
+      ctx.save(); ctx.beginPath(); ctx.rect(x+2,y+20,w-4,h-48); ctx.clip();
+      drawPhotoWithFilter(item.photo,x+2,y+20,w-4,h-48,item.filter); ctx.restore();
+    } else {
+      ctx.fillStyle=bgEmpty; ctx.fillRect(x+2,y+20,w-4,h-48);
+      ctx.fillStyle='#555'; ctx.font=`${Math.min(w,h)*.09}px Arial`; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText('FOTO',x+w/2,y+20+(h-48)/2);
+    }
+    // bottom data strip
+    ctx.fillStyle='#111'; ctx.fillRect(x,y+h-28,w,28);
+    // agency measurement lines
+    ctx.strokeStyle=th.accent||'#ffd700'; ctx.lineWidth=0.5; ctx.globalAlpha=0.5;
+    ctx.beginPath(); ctx.moveTo(x+w-22,y+20); ctx.lineTo(x+w-22,y+h-28); ctx.stroke();
+    ctx.globalAlpha=1;
+    // top label text
+    if(item.legend){
+      ctx.fillStyle='#000'; ctx.font=`bold ${Math.min(11,item.fontSize||11)}px Arial`;
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText((item.legend).toUpperCase(),x+w/2,y+10);
+    }
+    // bottom strip text
+    ctx.fillStyle=th.accent||'#ffd700'; ctx.font=`${item.fontSize||10}px Arial`;
+    ctx.textAlign='left'; ctx.textBaseline='middle';
+    ctx.fillText(item.legend||'AGÊNCIA  •  MODEL',x+6,y+h-14);
+    ctx.fillStyle='rgba(255,255,255,0.3)'; ctx.textAlign='right';
+    ctx.fillText('BOOK',x+w-6,y+h-14);
+    // outer border
+    ctx.strokeStyle=th.accent||'#ffd700'; ctx.lineWidth=1;
+    ctx.strokeRect(x,y,w,h);
+  }
+  else if(item.frameType==='contact_sheet'){
+    // Contact sheet - 6 small frames in a grid
+    emptyFill();
+    ctx.fillStyle='#1a1a1a'; ctx.fillRect(x,y,w,h);
+    ctx.strokeStyle='#333'; ctx.lineWidth=1; ctx.strokeRect(x,y,w,h);
+    const cols=2, rows=3, gapX=4, gapY=4;
+    const cellW=(w-gapX*(cols+1))/cols;
+    const cellH=(h-gapY*(rows+1))/rows;
+    for(let r=0;r<rows;r++){ for(let c=0;c<cols;c++){
+      const cx2=x+gapX+(c*(cellW+gapX));
+      const cy2=y+gapY+(r*(cellH+gapY));
+      ctx.fillStyle='#2a2a2a'; ctx.fillRect(cx2,cy2,cellW,cellH);
+      if(hasPhoto){
+        ctx.save(); ctx.beginPath(); ctx.rect(cx2,cy2,cellW,cellH); ctx.clip();
+        drawPhotoWithFilter(item.photo,cx2,cy2,cellW,cellH,item.filter); ctx.restore();
+      } else {
+        ctx.fillStyle='#444'; ctx.font=`${Math.min(cellW,cellH)*.2}px Arial`; ctx.textAlign='center'; ctx.textBaseline='middle';
+        ctx.fillText('+',(cx2+cellW/2),(cy2+cellH/2));
+      }
+      // frame number
+      ctx.fillStyle='rgba(255,255,255,0.5)'; ctx.font=`8px Arial`; ctx.textAlign='left'; ctx.textBaseline='top';
+      ctx.fillText(String(r*cols+c+1).padStart(2,'0'),cx2+2,cy2+2);
+    }}
+    if(item.legend){
+      ctx.fillStyle='#aaa'; ctx.font=`${item.fontSize||9}px Arial`; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(item.legend,x+w/2,y+h-5);
+    }
+  }
+
+  ctx.shadowBlur=0; ctx.shadowOffsetX=0; ctx.shadowOffsetY=0;
+
+  // Legend for non-polaroid frames
+  if(item.legend && ['fancy','ticket','round','star','heart','filmstrip'].includes(item.frameType)){
+    ctx.fillStyle=item.textColor||'#444';
+    ctx.font=`${item.fontSize||13}px ${item.font||'Georgia'}`;
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(item.legend,x+w/2,y+h-bord/2+4);
+  }
+
+  // Selection outline
+  if(item.id===selectedItemId){
+    ctx.strokeStyle='#1a6b3a'; ctx.lineWidth=1.5; ctx.setLineDash([4,3]);
+    ctx.strokeRect(x-3,y-3,w+6,h+6); ctx.setLineDash([]);
+    ctx.fillStyle='#1a6b3a';
+    [[x-3,y-3],[x+w/2-4,y-3],[x+w+3-8,y-3],[x-3,y+h/2-4],[x+w+3-8,y+h/2-4],[x-3,y+h+3-8],[x+w/2-4,y+h+3-8],[x+w+3-8,y+h+3-8]]
+    .forEach(([hx,hy])=>{ ctx.fillRect(hx,hy,7,7); });
+  }
+  ctx.restore();
+}
+
+function drawStickerItem(item){
+  ctx.save();
+  const cx=item.x+item.w/2, cy=item.y+item.h/2;
+  ctx.translate(cx,cy);
+  ctx.rotate(item.rotation*Math.PI/180);
+  ctx.translate(-item.w/2,-item.h/2);
+  // Renderizar emoji do adesivo
+  ctx.font=`${item.h*0.85}px Arial`;
+  ctx.textAlign='center';
+  ctx.textBaseline='middle';
+  ctx.fillText(item.sticker||'❤️',item.w/2,item.h/2);
+  // Selection handles
+  if(item.id===selectedItemId){
+    ctx.strokeStyle='#1a6b3a'; ctx.lineWidth=2; ctx.setLineDash([5,5]);
+    ctx.strokeRect(0,0,item.w,item.h); ctx.setLineDash([]);
+    const hs=8;
+    [[0,0],[item.w/2,0],[item.w,0],[0,item.h/2],[item.w,item.h/2],[0,item.h],[item.w/2,item.h],[item.w,item.h]].forEach(([hx,hy])=>{
+      ctx.fillStyle='#fff'; ctx.fillRect(hx-hs/2,hy-hs/2,hs,hs);
+      ctx.strokeStyle='#1a6b3a'; ctx.lineWidth=1.5; ctx.strokeRect(hx-hs/2,hy-hs/2,hs,hs);
+    });
+  }
+  ctx.restore();
+}
+
+function drawTextItem(item){
+  ctx.save();
+  ctx.font=`${item.fontSize||20}px ${item.font||'Georgia'}`;
+  const tw=ctx.measureText(item.text||'').width;
+  const cx=item.x+tw/2, cy=item.y+(item.fontSize||20)/2;
+  ctx.translate(cx,cy); ctx.rotate(item.rotation*Math.PI/180); ctx.translate(-cx,-cy);
+  ctx.fillStyle=item.textColor||'#333';
+  ctx.textBaseline='top'; ctx.fillText(item.text||'Texto',item.x,item.y);
+  if(item.id===selectedItemId){
+    ctx.strokeStyle='#1a6b3a'; ctx.lineWidth=1; ctx.setLineDash([3,2]);
+    ctx.strokeRect(item.x-3,item.y-3,tw+6,(item.fontSize||20)+6); ctx.setLineDash([]);
+  }
+  ctx.restore();
+}
+
+/* ===== RENDER ===== */
+function render(){
+  const w=getCW(), h=getCH();
+  canvas.width=w; canvas.height=h;
+  const pg=getPage();
+  const th=getTheme(pg.theme);
+  th.decorFn(ctx,w,h,th,pg.isCover,pg);
+  drawBindingBorder();
+  const sorted=[...getItems()].sort((a,b)=>(a.z||0)-(b.z||0));
+  sorted.forEach(it=>{ 
+    if(it.type==='frame') drawFrameItem(it);
+    else if(it.type==='sticker') drawStickerItem(it);
+    else drawTextItem(it);
+  });
+}
+
+/* ===== INTERACTION ===== */
+function getScale(){
+  const r=canvas.getBoundingClientRect();
+  return{sx:canvas.width/r.width, sy:canvas.height/r.height};
+}
+function getItemAt(mx,my){
+  const sorted=[...getItems()].sort((a,b)=>(b.z||0)-(a.z||0));
+  for(const it of sorted){
+    if(it.type==='frame' || it.type==='sticker'){
+      const cx2=it.x+it.w/2, cy2=it.y+it.h/2;
+      const rad=-it.rotation*Math.PI/180;
+      const lx=Math.cos(rad)*(mx-cx2)-Math.sin(rad)*(my-cy2)+cx2;
+      const ly=Math.sin(rad)*(mx-cx2)+Math.cos(rad)*(my-cy2)+cy2;
+      if(lx>=it.x&&lx<=it.x+it.w&&ly>=it.y&&ly<=it.y+it.h) return it;
+    } else {
+      ctx.font=`${it.fontSize||20}px ${it.font||'Georgia'}`;
+      const tw=ctx.measureText(it.text||'').width;
+      if(mx>=it.x-4&&mx<=it.x+tw+4&&my>=it.y-4&&my<=it.y+(it.fontSize||20)+4) return it;
+    }
+  }
+  return null;
+}
+
+function getHandleAt(mx,my,item){
+  if(!item || (item.type!=='frame' && item.type!=='sticker')) return -1;
+  const cx=item.x+item.w/2, cy=item.y+item.h/2;
+  const rad=-item.rotation*Math.PI/180;
+  const lx=Math.cos(rad)*(mx-cx)-Math.sin(rad)*(my-cy);
+  const ly=Math.sin(rad)*(mx-cx)+Math.cos(rad)*(my-cy);
+  const hs=8;
+  const handles=[
+    [-item.w/2,-item.h/2],
+    [0,-item.h/2],
+    [item.w/2,-item.h/2],
+    [-item.w/2,0],
+    [item.w/2,0],
+    [-item.w/2,item.h/2],
+    [0,item.h/2],
+    [item.w/2,item.h/2]
+  ];
+  for(let i=0;i<handles.length;i++){
+    const [hx,hy]=handles[i];
+    if(Math.abs(lx-hx)<hs && Math.abs(ly-hy)<hs) return i;
+  }
+  return -1;
+}
+
+canvas.addEventListener('mousedown',e=>{
+  const r=canvas.getBoundingClientRect();
+  const{sx,sy}=getScale();
+  const mx=(e.clientX-r.left)*sx, my=(e.clientY-r.top)*sy;
+  const it=getItemAt(mx,my);
+  if(it){
+    selectedItemId=it.id;
+    it.z=getItems().reduce((a,b)=>Math.max(a,b.z||0),0)+1;
+    // Verificar se clicou em uma alça
+    const handle=getHandleAt(mx,my,it);
+    if(handle!==-1){
+      resizing=true;
+      resizeHandle=handle;
+      resizeOriginal={x:it.x,y:it.y,w:it.w,h:it.h};
+      dragOx=mx;dragOy=my;
+    } else {
+      dragging=true;
+      dragOx=mx-it.x;dragOy=my-it.y;
+    }
+    render(); updateRightPanel();
+  } else { selectedItemId=null; render(); updateRightPanel(); }
+});
+canvas.addEventListener('mousemove',e=>{
+  if((!dragging && !resizing) || !selectedItemId) return;
+  const r=canvas.getBoundingClientRect();
+  const{sx,sy}=getScale();
+  const mx=(e.clientX-r.left)*sx, my=(e.clientY-r.top)*sy;
+  const it=getItems().find(i=>i.id===selectedItemId);
+  if(!it) return;
+  
+  if(resizing){
+    const dx=mx-dragOx, dy=my-dragOy;
+    const cos=Math.cos(-it.rotation*Math.PI/180);
+    const sin=Math.sin(-it.rotation*Math.PI/180);
+    const rdx=cos*dx-sin*dy;
+    const rdy=sin*dx+cos*dy;
+    
+    // Handles: 0=TL, 1=T, 2=TR, 3=L, 4=R, 5=BL, 6=B, 7=BR
+    if(resizeHandle===0){//TL
+      it.w=resizeOriginal.w-rdx;it.h=resizeOriginal.h-rdy;
+      it.x=resizeOriginal.x+rdx*cos+rdy*sin;
+      it.y=resizeOriginal.y-rdx*sin+rdy*cos;
+    }else if(resizeHandle===2){//TR
+      it.w=resizeOriginal.w+rdx;it.h=resizeOriginal.h-rdy;
+      it.x=resizeOriginal.x-rdy*sin;
+      it.y=resizeOriginal.y+rdy*cos;
+    }else if(resizeHandle===5){//BL
+      it.w=resizeOriginal.w-rdx;it.h=resizeOriginal.h+rdy;
+      it.x=resizeOriginal.x+rdx*cos;
+      it.y=resizeOriginal.y-rdx*sin;
+    }else if(resizeHandle===7){//BR
+      it.w=resizeOriginal.w+rdx;it.h=resizeOriginal.h+rdy;
+    }else if(resizeHandle===1){//T
+      it.h=resizeOriginal.h-rdy;
+      it.x=resizeOriginal.x-rdy*sin;
+      it.y=resizeOriginal.y+rdy*cos;
+    }else if(resizeHandle===6){//B
+      it.h=resizeOriginal.h+rdy;
+    }else if(resizeHandle===3){//L
+      it.w=resizeOriginal.w-rdx;
+      it.x=resizeOriginal.x+rdx*cos;
+      it.y=resizeOriginal.y-rdx*sin;
+    }else if(resizeHandle===4){//R
+      it.w=resizeOriginal.w+rdx;
+    }
+    it.w=Math.max(30,it.w);it.h=Math.max(30,it.h);
+    render();updateRightPanel();
+  } else if(dragging){
+    it.x=mx-dragOx; it.y=my-dragOy; render();
+  }
+});
+canvas.addEventListener('mouseup',()=>{dragging=false;resizing=false;resizeHandle=-1;});
+canvas.addEventListener('mouseleave',()=>{dragging=false;resizing=false;resizeHandle=-1;});
+canvas.addEventListener('dblclick',e=>{
+  const r=canvas.getBoundingClientRect();
+  const{sx,sy}=getScale();
+  const mx=(e.clientX-r.left)*sx, my=(e.clientY-r.top)*sy;
+  const it=getItemAt(mx,my);
+  if(!it) return;
+  // Duplo clique em adesivo: confirmar exclusão
+  if(it.type==='sticker'){
+    if(confirm(`Deletar este adesivo ${it.sticker}?`)){
+      pages[currentPageIdx].items=getItems().filter(i=>i.id!==it.id);
+      selectedItemId=null;render();updateRightPanel();
+    }
+    return;
+  }
+  const cur=it.type==='text'?it.text:it.legend;
+  const nv=prompt(it.type==='text'?'Editar texto:':'Legenda da foto:',cur||'');
+  if(nv!==null){ it.type==='text'?it.text=nv:it.legend=nv; render(); updateRightPanel(); }
+});
+
+/* ===== RIGHT PANEL ===== */
+function updateRightPanel(){
+  const it=getItems().find(i=>i.id===selectedItemId);
+  const info=document.getElementById('selInfo');
+  const props=document.getElementById('itemProps');
+  if(!it){ info.textContent='Nenhum item selecionado'; props.style.display='none'; return; }
+  info.textContent=it.type==='frame'?`Moldura: ${it.frameType}`:'Caixa de texto';
+  props.style.display='';
+  document.getElementById('legendPropRow').style.display=it.type==='frame'?'':'none';
+  document.getElementById('textContentRow').style.display=it.type==='text'?'':'none';
+  document.getElementById('frameSizePropRow').style.display=it.type==='frame'?'':'none';
+  document.getElementById('shadowPropRow').style.display=it.type==='frame'?'':'none';
+  document.getElementById('filterPropRow').style.display=it.type==='frame'?'':'none';
+  if(it.type==='frame') document.getElementById('legendProp').value=it.legend||'';
+  if(it.type==='text') document.getElementById('textContentProp').value=it.text||'';
+  document.getElementById('rotProp').value=it.rotation||0;
+  document.getElementById('rotPropVal').textContent=Math.round(it.rotation||0)+'°';
+  document.getElementById('fontProp').value=it.font||'Georgia';
+  document.getElementById('fontSizeProp').value=it.fontSize||14;
+  document.getElementById('fontSizePropVal').textContent=(it.fontSize||14)+'px';
+  document.getElementById('textColorProp').value=it.textColor||'#333333';
+  if(it.type==='frame'){
+    document.getElementById('frameSizeProp').value=it.w||130;
+    document.getElementById('frameSizePropVal').textContent=(it.w||130)+'px';
+    document.getElementById('shadowProp').value=it.shadow||8;
+    document.getElementById('shadowPropVal').textContent=it.shadow||8;
+    document.getElementById('filterProp').value=it.filter||'none';
+  }
+}
+
+document.getElementById('legendProp').addEventListener('input',e=>{
+  const it=getItems().find(i=>i.id===selectedItemId);
+  if(it&&(it.type==='frame'||it.type==='sticker')){it.legend=e.target.value;render();}
+});
+document.getElementById('textContentProp').addEventListener('input',e=>{
+  const it=getItems().find(i=>i.id===selectedItemId);
+  if(it&&it.type==='text'){it.text=e.target.value;render();}
+});
+document.getElementById('rotProp').addEventListener('input',e=>{
+  const it=getItems().find(i=>i.id===selectedItemId);
+  if(it){it.rotation=parseFloat(e.target.value);document.getElementById('rotPropVal').textContent=Math.round(it.rotation)+'°';render();}
+});
+document.getElementById('fontProp').addEventListener('change',e=>{
+  const it=getItems().find(i=>i.id===selectedItemId);
+  if(it){it.font=e.target.value;render();}
+});
+document.getElementById('fontSizeProp').addEventListener('input',e=>{
+  const it=getItems().find(i=>i.id===selectedItemId);
+  if(it){it.fontSize=parseInt(e.target.value);document.getElementById('fontSizePropVal').textContent=e.target.value+'px';render();}
+});
+document.getElementById('textColorProp').addEventListener('input',e=>{
+  const it=getItems().find(i=>i.id===selectedItemId);
+  if(it){it.textColor=e.target.value;render();}
+});
+document.getElementById('frameSizeProp').addEventListener('input',e=>{
+  const it=getItems().find(i=>i.id===selectedItemId);
+  if(it&&(it.type==='frame'||it.type==='sticker')){
+    const nw=parseInt(e.target.value), ratio=it.h/it.w;
+    it.w=nw; it.h=Math.round(nw*ratio);
+    document.getElementById('frameSizePropVal').textContent=nw+'px';
+    render();
+  }
+});
+document.getElementById('shadowProp').addEventListener('input',e=>{
+  const it=getItems().find(i=>i.id===selectedItemId);
+  if(it){it.shadow=parseInt(e.target.value);document.getElementById('shadowPropVal').textContent=e.target.value;render();}
+});
+document.getElementById('filterProp').addEventListener('change',e=>{
+  const it=getItems().find(i=>i.id===selectedItemId);
+  if(it&&(it.type==='frame'||it.type==='sticker')){it.filter=e.target.value;render();}
+});
+
+document.getElementById('bindSide').addEventListener('change',e=>{bindSide=e.target.value;render();});
+document.getElementById('bindWidth').addEventListener('input',e=>{bindWidth=parseInt(e.target.value);document.getElementById('bindWidthVal').textContent=e.target.value+'mm';render();});
+document.getElementById('bindColor').addEventListener('input',e=>{bindColor=e.target.value;render();});
+document.getElementById('formatSel').addEventListener('change',e=>{fmt=e.target.value;render();});
+
+document.getElementById('rotLBtn').addEventListener('click',()=>{const it=getItems().find(i=>i.id===selectedItemId);if(it){it.rotation=(it.rotation||0)-15;render();updateRightPanel();}});
+document.getElementById('rotRBtn').addEventListener('click',()=>{const it=getItems().find(i=>i.id===selectedItemId);if(it){it.rotation=(it.rotation||0)+15;render();updateRightPanel();}});
+document.getElementById('frontBtn').addEventListener('click',()=>{const it=getItems().find(i=>i.id===selectedItemId);if(it){it.z=getItems().reduce((a,b)=>Math.max(a,b.z||0),0)+1;render();}});
+document.getElementById('backBtn').addEventListener('click',()=>{const it=getItems().find(i=>i.id===selectedItemId);if(it){it.z=getItems().reduce((a,b)=>Math.min(a,b.z||0),0)-1;render();}});
+document.getElementById('delItemBtn').addEventListener('click',()=>{
+  if(!selectedItemId) return;
+  pages[currentPageIdx].items=getItems().filter(i=>i.id!==selectedItemId);
+  selectedItemId=null; render(); updateRightPanel();
+});
+
+document.getElementById('addPageBtn').addEventListener('click',()=>{
+  pages.push(initPage(false)); currentPageIdx=pages.length-1;
+  selectedItemId=null; renderTabs(); render(); updateRightPanel(); updateCoverPanel();
+});
+document.getElementById('addCoverBtn').addEventListener('click',()=>{
+  pages.unshift(initPage(true)); currentPageIdx=0;
+  selectedItemId=null; renderTabs(); render(); updateRightPanel(); updateCoverPanel();
+});
+document.getElementById('dupPageBtn').addEventListener('click',()=>{
+  const pg=JSON.parse(JSON.stringify(getPage()));
+  pg.items.forEach(it=>{ it.id=nextId++; if(it.photo) delete it.photo; });
+  pages.splice(currentPageIdx+1,0,pg);
+  currentPageIdx=currentPageIdx+1;
+  renderTabs(); render(); updateRightPanel(); updateCoverPanel();
+});
+
+document.getElementById('addTextCanvasBtn').addEventListener('click',()=>{
+  const w=getCW(),h=getCH();
+  const th=getTheme(getPage().theme);
+  const isBook=getPage().theme.startsWith('book');
+  getItems().push({
+    id:nextId++,type:'text',
+    x:80+Math.random()*(w-240),y:80+Math.random()*(h-120),
+    text:'Meu texto aqui',font:isBook?'Arial':'Georgia',fontSize:26,
+    textColor:isBook?th.textColor:'#333',
+    rotation:0,z:getItems().length
+  });
+  selectedItemId=getItems()[getItems().length-1].id;
+  render(); updateRightPanel();
+});
+
+function addFrameToPage(frameType){
+  const w=getCW(),h=getCH();
+  const bpx=bindSide!=='none'?Math.round(bindWidth*MM):0;
+  const ox=bindSide==='left'?bpx:0;
+  const dims={
+    polaroid:{fw:140,fh:182,pad:10,bord:42},
+    polaroid_wide:{fw:200,fh:158,pad:8,bord:36},
+    polaroid_tall:{fw:110,fh:200,pad:8,bord:55},
+    polaroid_mini:{fw:90,fh:116,pad:6,bord:28},
+    polaroid_strip:{fw:78,fh:260,pad:4,bord:18},
+    polaroid_label:{fw:140,fh:198,pad:10,bord:52},
+    plain:{fw:140,fh:172,pad:8,bord:36},
+    round:{fw:130,fh:130,pad:8,bord:20},
+    fancy:{fw:140,fh:182,pad:10,bord:40},
+    filmstrip:{fw:110,fh:200,pad:4,bord:18},
+    heart:{fw:130,fh:130,pad:8,bord:20},
+    star:{fw:130,fh:130,pad:8,bord:20},
+    ticket:{fw:140,fh:192,pad:6,bord:44},
+    leaf:{fw:110,fh:160,pad:8,bord:20},
+    book_frame:{fw:150,fh:212,pad:2,bord:28},
+    contact_sheet:{fw:160,fh:220,pad:4,bord:14},
+  };
+  const d=dims[frameType]||dims.polaroid;
+  const fw=d.fw,fh=d.fh;
+  const isBook=frameType.startsWith('book')||frameType==='contact_sheet';
+  getItems().push({
+    id:nextId++,type:'frame',frameType,
+    x:ox+40+Math.random()*(w-fw-ox-60),
+    y:40+Math.random()*(h-fh-80),
+    w:fw,h:fh,padding:d.pad,borderBottom:d.bord,
+    photo:null,legend:'',filter:'none',
+    font:'Georgia',fontSize:12,textColor:isBook?'#fff':'#444',
+    rotation:(Math.random()-.5)*(isBook?4:12),
+    z:getItems().length,shadow:isBook?14:8
+  });
+  selectedItemId=getItems()[getItems().length-1].id;
+  render(); updateRightPanel();
+}
+
+document.getElementById('addFrameCanvasBtn').addEventListener('click',()=>{
+  const ft=document.querySelector('.frame-btn.active');
+  addFrameToPage(ft?ft.dataset.id:'polaroid');
+});
+
+document.getElementById('photoFileInput').addEventListener('change',e=>{
+  const file=e.target.files[0]; if(!file) return;
+  const it=getItems().find(i=>i.id===selectedItemId&&i.type==='frame');
+  if(!it){
+    document.getElementById('uploadHint').textContent='⚠ Selecione uma moldura primeiro!';
+    e.target.value=''; return;
+  }
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    const img=new Image();
+    img.onload=()=>{ it.photo=img; render(); };
+    img.src=ev.target.result;
+  };
+  reader.readAsDataURL(file);
+  document.getElementById('uploadHint').textContent='✓ Foto adicionada com sucesso!';
+  e.target.value='';
+});
+
+/* ===== TABS ===== */
+function renderTabs(){
+  const tabs=document.getElementById('pageTabs'); tabs.innerHTML='';
+  pages.forEach((p,i)=>{
+    const t=document.createElement('div');
+    t.className='page-tab'+(i===currentPageIdx?' active':'');
+    t.textContent=p.isCover?'📕 Capa':`Pág ${i}`;
+    t.onclick=()=>{ currentPageIdx=i; selectedItemId=null; renderTabs(); render(); updateRightPanel(); updateCoverPanel(); };
+    tabs.appendChild(t);
+  });
+}
+
+/* ===== COVER TITLE EDITING ===== */
+function updateCoverPanel(){
+  const pg=getPage();
+  const sec=document.getElementById('coverEditSection');
+  if(!pg.isCover){ sec.style.display='none'; return; }
+  sec.style.display='';
+  document.getElementById('coverTitleInput').value=pg.coverTitle||'';
+  document.getElementById('coverSubtitleInput').value=pg.coverSubtitle||'';
+  document.getElementById('coverFontInput').value=pg.coverFont||'';
+  document.getElementById('coverTitleSizeInput').value=pg.coverTitleSize||56;
+  document.getElementById('coverTitleSizeVal').textContent=pg.coverTitleSize||56;
+  const th=getTheme(pg.theme);
+  document.getElementById('coverTitleColorInput').value=pg.coverTitleColor||th.textColor||'#ffffff';
+  document.getElementById('coverSubtitleColorInput').value=pg.coverSubtitleColor||th.textColor||'#cccccc';
+}
+
+document.getElementById('coverTitleInput').addEventListener('input',e=>{
+  getPage().coverTitle=e.target.value; render();
+});
+document.getElementById('coverSubtitleInput').addEventListener('input',e=>{
+  getPage().coverSubtitle=e.target.value; render();
+});
+document.getElementById('coverFontInput').addEventListener('change',e=>{
+  getPage().coverFont=e.target.value; render();
+});
+document.getElementById('coverTitleSizeInput').addEventListener('input',e=>{
+  getPage().coverTitleSize=parseInt(e.target.value);
+  document.getElementById('coverTitleSizeVal').textContent=e.target.value;
+  render();
+});
+document.getElementById('coverTitleColorInput').addEventListener('input',e=>{
+  getPage().coverTitleColor=e.target.value; render();
+});
+document.getElementById('coverSubtitleColorInput').addEventListener('input',e=>{
+  getPage().coverSubtitleColor=e.target.value; render();
+});
+document.getElementById('resetCoverTitleBtn').addEventListener('click',()=>{
+  const pg=getPage();
+  const def=COVER_DEFAULTS[pg.theme]||{title:'Meu Álbum',subtitle:'Minhas memórias'};
+  pg.coverTitle=def.title; pg.coverSubtitle=def.subtitle;
+  pg.coverFont=''; pg.coverTitleSize=0; pg.coverTitleColor=''; pg.coverSubtitleColor='';
+  updateCoverPanel(); render();
+});
+
+/* ===== EXPORT ===== */
+function exportPdf(orientation){
+  const{jsPDF}=window.jspdf;
+  const isP=orientation==='portrait';
+  const doc=new jsPDF({orientation:isP?'portrait':'landscape',unit:'mm',format:'a4'});
+  const pw=isP?210:297, ph=isP?297:210;
+  doc.addImage(canvas.toDataURL('image/png',1.0),'PNG',0,0,pw,ph);
+  doc.save(`album_pag${currentPageIdx+1}_${orientation}.pdf`);
+}
+function exportPng(){
+  const a=document.createElement('a');
+  a.download=`album_pag${currentPageIdx+1}.png`;
+  a.href=canvas.toDataURL('image/png',1.0); a.click();
+}
+['exportPdfPortraitBtn','expPdfP'].forEach(id=>document.getElementById(id).addEventListener('click',()=>exportPdf('portrait')));
+['exportPdfLandscapeBtn','expPdfL'].forEach(id=>document.getElementById(id).addEventListener('click',()=>exportPdf('landscape')));
+['exportPngBtn','expPng'].forEach(id=>document.getElementById(id).addEventListener('click',exportPng));
+
+/* ===== INIT GRIDS ===== */
+function initThemeGrid(){
+  const g=document.getElementById('themeGrid'); g.innerHTML='';
+  THEMES.forEach(th=>{
+    const b=document.createElement('div');
+    b.className='theme-btn'+(th.id===currentTheme.id?' active':'');
+    b.innerHTML=`<span class="theme-icon">${th.icon}</span>${th.name}`;
+    b.onclick=()=>{
+      currentTheme=th; getPage().theme=th.id;
+      document.querySelectorAll('.theme-btn').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active'); render(); updateCoverPanel();
+    };
+    g.appendChild(b);
+  });
+}
+
+// Inicializar biblioteca de adesivos
+function initStickerLibrary(){
+  const grids={
+    hearts:document.getElementById('stickerGridHearts'),
+    stars:document.getElementById('stickerGridStars'),
+    nature:document.getElementById('stickerGridNature'),
+    emojis:document.getElementById('stickerGridEmojis'),
+    shapes:document.getElementById('stickerGridShapes'),
+    misc:document.getElementById('stickerGridMisc')
+  };
+  
+  Object.keys(STICKERS).forEach(category=>{
+    const grid=grids[category];
+    if(!grid)return;
+    grid.innerHTML='';
+    STICKERS[category].forEach(sticker=>{
+      const btn=document.createElement('div');
+      btn.className='sticker-btn';
+      btn.textContent=sticker;
+      btn.title=`Adicionar ${sticker}`;
+      btn.addEventListener('click',()=>{
+        addStickerToCanvas(sticker);
+        closeStickerModal();
+      });
+      grid.appendChild(btn);
+    });
+  });
+}
+
+function addStickerToCanvas(stickerEmoji){
+  const w=getCW(),h=getCH();
+  const bpx=bindSide!=='none'?Math.round(bindWidth*MM):0;
+  const ox=bindSide==='left'?bpx:0;
+  getItems().push({
+    id:nextId++,
+    type:'sticker',
+    sticker:stickerEmoji,
+    x:ox+w/2-60,
+    y:h/2-60,
+    w:120,
+    h:120,
+    rotation:(Math.random()-.5)*8,
+    z:getItems().length
+  });
+  selectedItemId=getItems()[getItems().length-1].id;
+  render();
+  updateRightPanel();
+  showToast(`Adesivo ${stickerEmoji} adicionado!`);
+}
+
+function openStickerModal(){document.getElementById('stickerModal').classList.add('open');}
+function closeStickerModal(){document.getElementById('stickerModal').classList.remove('open');}
+
+function initFrameGrid(){
+  const g=document.getElementById('frameGrid'); g.innerHTML='';
+  FRAME_TYPES.forEach((ft,i)=>{
+    const b=document.createElement('div');
+    b.className='frame-btn'+(i===0?' active':'');
+    b.dataset.id=ft.id;
+    b.innerHTML=`<span class="frame-icon">${ft.icon}</span>${ft.name}`;
+    b.onclick=()=>{
+      document.querySelectorAll('.frame-btn').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+    };
+    g.appendChild(b);
+  });
+}
+
+/* ===== CANVAS SCALE ===== */
+function scaleCanvas(){
+  const area=document.getElementById('canvasArea');
+  const availH=area.clientHeight-80;
+  const availW=area.clientWidth-48;
+  const cw=getCW(), ch=getCH();
+  const scale=Math.min(availW/cw, availH/ch, 1);
+  canvasWrap.style.transform=`scale(${scale})`;
+  canvasWrap.style.transformOrigin='top center';
+  canvasWrap.style.marginBottom=`${(ch*scale)-ch}px`;
+}
+
+window.addEventListener('resize',()=>{ scaleCanvas(); });
+
+
+/* ===== PROJECT SAVE / LOAD ===== */
+const STORAGE_KEY = 'albumPages_projects';
+
+function showToast(msg, duration=2000){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), duration);
+}
+
+function serializeProject(){
+  // Pages without actual Image objects (convert photos to dataURL strings)
+  const data = pages.map(pg=>({
+    theme: pg.theme,
+    isCover: pg.isCover,
+    coverTitle: pg.coverTitle||'',
+    coverSubtitle: pg.coverSubtitle||'',
+    coverTitleSize: pg.coverTitleSize||0,
+    coverTitleColor: pg.coverTitleColor||'',
+    coverSubtitleColor: pg.coverSubtitleColor||'',
+    coverFont: pg.coverFont||'',
+    items: pg.items.map(it=>{
+      const item = {...it};
+      if(item.photo && item.photo instanceof HTMLImageElement){
+        // Convert image to data URL
+        const off=document.createElement('canvas');
+        off.width=item.photo.naturalWidth||item.w||200;
+        off.height=item.photo.naturalHeight||item.h||200;
+        off.getContext('2d').drawImage(item.photo,0,0);
+        item.photo=off.toDataURL('image/jpeg',0.85);
+      }
+      return item;
+    })
+  }));
+  return { pages: data, fmt, bindSide, bindWidth, bindColor, savedAt: new Date().toISOString() };
+}
+
+function deserializeProject(data){
+  fmt = data.fmt||'portrait';
+  bindSide = data.bindSide||'left';
+  bindWidth = data.bindWidth||20;
+  bindColor = data.bindColor||'#e8d5b0';
+  document.getElementById('bindSide').value=bindSide;
+  document.getElementById('bindWidth').value=bindWidth;
+  document.getElementById('bindWidthVal').textContent=bindWidth+'mm';
+  document.getElementById('bindColor').value=bindColor;
+  document.getElementById('formatSel').value=fmt;
+
+  pages = data.pages.map(pg=>({
+    theme: pg.theme||'baby',
+    isCover: pg.isCover||false,
+    coverTitle: pg.coverTitle||'',
+    coverSubtitle: pg.coverSubtitle||'',
+    coverTitleSize: pg.coverTitleSize||0,
+    coverTitleColor: pg.coverTitleColor||'',
+    coverSubtitleColor: pg.coverSubtitleColor||'',
+    coverFont: pg.coverFont||'',
+    items: pg.items.map(it=>{
+      const item={...it};
+      if(item.photo && typeof item.photo==='string'){
+        const img=new Image();
+        img.src=item.photo;
+        item.photo=img;
+      }
+      return item;
+    })
+  }));
+  currentPageIdx=0;
+  selectedItemId=null;
+}
+
+function getProjects(){
+  try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'); }
+  catch(e){ return []; }
+}
+function saveProjects(list){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+}
+
+function saveProject(name){
+  if(!name.trim()){ showToast('Digite um nome para o projeto'); return; }
+  const list=getProjects();
+  const data=serializeProject();
+  const existing=list.findIndex(p=>p.name===name.trim());
+  const entry={ name:name.trim(), data, savedAt:new Date().toLocaleString('pt-BR') };
+  if(existing>=0){ list[existing]=entry; }
+  else{ list.unshift(entry); }
+  saveProjects(list);
+  showToast(`✓ Projeto "${name.trim()}" salvo!`);
+  renderProjectList();
+}
+
+function loadProject(name){
+  const list=getProjects();
+  const entry=list.find(p=>p.name===name);
+  if(!entry){ showToast('Projeto não encontrado'); return; }
+  deserializeProject(entry.data);
+  initThemeGrid();
+  renderTabs();
+  render();
+  updateRightPanel();
+  updateCoverPanel();
+  scaleCanvas();
+  closeModal();
+  showToast(`✓ Projeto "${name}" carregado!`);
+}
+
+function deleteProject(name){
+  if(!confirm(`Deletar o projeto "${name}"?`)) return;
+  const list=getProjects().filter(p=>p.name!==name);
+  saveProjects(list);
+  renderProjectList();
+  showToast(`Projeto "${name}" removido.`);
+}
+
+function renderProjectList(){
+  const list=getProjects();
+  const container=document.getElementById('projectList');
+  if(!list.length){
+    container.innerHTML='<div class="empty-msg">Nenhum projeto salvo ainda.<br>Dê um nome acima e clique em Salvar.</div>';
+    return;
+  }
+  container.innerHTML='';
+  list.forEach(p=>{
+    const div=document.createElement('div');
+    div.className='project-item';
+    div.innerHTML=`
+      <span class="pi-icon">📖</span>
+      <div class="pi-info">
+        <div class="pi-name">${p.name}</div>
+        <div class="pi-meta">Salvo em ${p.savedAt} &bull; ${p.data.pages.length} pág.</div>
+      </div>
+      <button class="pi-del" title="Deletar projeto">✕</button>
+    `;
+    div.querySelector('.pi-del').addEventListener('click',e=>{ e.stopPropagation(); deleteProject(p.name); });
+    div.addEventListener('click',()=>loadProject(p.name));
+    container.appendChild(div);
+  });
+}
+
+function openModal(){
+  const pg=getPage();
+  const def=COVER_DEFAULTS[pg.theme]||{title:'Meu Álbum'};
+  const suggest=pg.coverTitle||def.title||'Meu Álbum';
+  document.getElementById('projectNameInput').value=suggest;
+  renderProjectList();
+  document.getElementById('projectModal').classList.add('open');
+  document.getElementById('projectNameInput').focus();
+}
+function closeModal(){
+  document.getElementById('projectModal').classList.remove('open');
+}
+
+// Quick save: saves to the current project name if already set, else opens modal
+let currentProjectName='';
+document.getElementById('saveProjectBtn').addEventListener('click',()=>{
+  if(currentProjectName){
+    saveProject(currentProjectName);
+  } else {
+    openModal();
+  }
+});
+document.getElementById('openProjectBtn').addEventListener('click',openModal);
+document.getElementById('closeModalBtn').addEventListener('click',closeModal);
+document.getElementById('closeModal2Btn').addEventListener('click',closeModal);
+document.getElementById('projectModal').addEventListener('click',e=>{
+  if(e.target===document.getElementById('projectModal')) closeModal();
+});
+
+// Event listeners para adesivos
+document.getElementById('addStickerBtn').addEventListener('click',openStickerModal);
+document.getElementById('closeStickerModalBtn').addEventListener('click',closeStickerModal);
+document.getElementById('closeStickerModal2Btn').addEventListener('click',closeStickerModal);
+document.getElementById('stickerModal').addEventListener('click',e=>{
+  if(e.target===document.getElementById('stickerModal'))closeStickerModal();
+});
+
+
+document.getElementById('saveNewBtn').addEventListener('click',()=>{
+  const name=document.getElementById('projectNameInput').value.trim();
+  currentProjectName=name;
+  saveProject(name);
+});
+document.getElementById('projectNameInput').addEventListener('keydown',e=>{
+  if(e.key==='Enter'){
+    const name=e.target.value.trim();
+    currentProjectName=name;
+    saveProject(name);
+  }
+});
+
+// Export project as .json file
+document.getElementById('exportJsonBtn').addEventListener('click',()=>{
+  const data=serializeProject();
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`album_project_${Date.now()}.json`;
+  a.click();
+  showToast('✓ Projeto exportado como .json');
+});
+
+// Import project from .json file
+document.getElementById('importJsonInput').addEventListener('change',e=>{
+  const file=e.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{
+      const data=JSON.parse(ev.target.result);
+      if(!data.pages) throw new Error('Arquivo inválido');
+      deserializeProject(data);
+      initThemeGrid();
+      renderTabs();
+      render();
+      updateRightPanel();
+      updateCoverPanel();
+      scaleCanvas();
+      showToast('✓ Projeto importado com sucesso!');
+    } catch(err){
+      showToast('Erro: arquivo .json inválido');
+    }
+  };
+  reader.readAsText(file);
+  e.target.value='';
+});
+
+/* ===== BOOT ===== */
+pages.push(initPage(true));
+pages.push(initPage(false));
+canvas.width=getCW(); canvas.height=getCH();
+initThemeGrid();
+initFrameGrid();
+initStickerLibrary();
+renderTabs();
+scaleCanvas();
+render();
+updateRightPanel();
+updateCoverPanel();
+</script>
 </body>
 </html>
