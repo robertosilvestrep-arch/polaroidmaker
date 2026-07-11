@@ -457,6 +457,7 @@ const FORMATS = {
   landscape: { w: Math.round(297*MM), h: Math.round(210*MM) }
 };
 let fmt = 'portrait';
+let renderScale = 1; // usado para renderizar em alta resolução na hora de exportar
 let pages = [];
 let currentPageIdx = 0;
 let selectedItemId = null;
@@ -1289,7 +1290,9 @@ function drawTextItem(item){
 /* ===== RENDER ===== */
 function render(){
   const w=getCW(), h=getCH();
-  canvas.width=w; canvas.height=h;
+  canvas.width=w*renderScale; canvas.height=h*renderScale;
+  ctx.setTransform(renderScale,0,0,renderScale,0,0);
+  ctx.imageSmoothingEnabled=true; ctx.imageSmoothingQuality='high';
   const pg=getPage();
   const th=getTheme(pg.theme);
   th.decorFn(ctx,w,h,th,pg.isCover,pg);
@@ -1683,13 +1686,17 @@ function exportPdf(orientation){
   const isP=orientation==='portrait';
   const doc=new jsPDF({orientation:isP?'portrait':'landscape',unit:'mm',format:'a4'});
   const pw=isP?210:297, ph=isP?297:210;
+  renderScale=4; render();
   doc.addImage(canvas.toDataURL('image/png',1.0),'PNG',0,0,pw,ph);
   doc.save(`album_pag${currentPageIdx+1}_${orientation}.pdf`);
+  renderScale=1; render();
 }
 function exportPng(){
+  renderScale=4; render();
   const a=document.createElement('a');
   a.download=`album_pag${currentPageIdx+1}.png`;
   a.href=canvas.toDataURL('image/png',1.0); a.click();
+  renderScale=1; render();
 }
 ['exportPdfPortraitBtn','expPdfP'].forEach(id=>document.getElementById(id).addEventListener('click',()=>exportPdf('portrait')));
 ['exportPdfLandscapeBtn','expPdfL'].forEach(id=>document.getElementById(id).addEventListener('click',()=>exportPdf('landscape')));
